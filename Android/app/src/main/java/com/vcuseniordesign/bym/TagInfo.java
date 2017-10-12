@@ -1,4 +1,4 @@
-package com.example.nicholas.seniordesign;
+package com.vcuseniordesign.bym;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -10,6 +10,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -22,6 +23,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.vcuseniordesign.bym.SettingsActivity;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -92,6 +96,13 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
             }
         });
 
+
+        final Button button = (Button) findViewById(R.id.settings_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                launchSettingsActivity();
+            }
+        });
     }
 
     private ScanCallback mLeScanCallback = new ScanCallback() {
@@ -193,4 +204,9 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
         }
     }
 
+
+    private void launchSettingsActivity() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
 }
