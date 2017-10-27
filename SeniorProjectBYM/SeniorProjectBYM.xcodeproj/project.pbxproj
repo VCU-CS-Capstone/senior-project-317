@@ -7,14 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */; };
+		0A0E05921F9FA976008AD428 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05911F9FA976008AD428 /* Beacon.swift */; };
+		0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */; };
+		0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */; };
+		0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */; };
 		0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380B1F84714500B4799E /* AppDelegate.swift */; };
 		0A73380E1F84714500B4799E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380D1F84714500B4799E /* ViewController.swift */; };
 		0A7338111F84714500B4799E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A73380F1F84714500B4799E /* Main.storyboard */; };
 		0A7338131F84714500B4799E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A7338121F84714500B4799E /* Assets.xcassets */; };
 		0A7338161F84714500B4799E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A7338141F84714500B4799E /* LaunchScreen.storyboard */; };
+		0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767761F9019D2007B1A53 /* TrackViewController.swift */; };
+		0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767781F951A39007B1A53 /* SignInViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconTableViewCell.swift; sourceTree = "<group>"; };
+		0A0E05911F9FA976008AD428 /* Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconTableViewController.swift; sourceTree = "<group>"; };
+		0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBeaconViewController.swift; sourceTree = "<group>"; };
+		0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconViewController.swift; sourceTree = "<group>"; };
 		0A7338081F84714500B4799E /* SeniorProjectBYM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeniorProjectBYM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A73380B1F84714500B4799E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A73380D1F84714500B4799E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +34,8 @@
 		0A7338121F84714500B4799E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A7338151F84714500B4799E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A7338171F84714500B4799E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A8767761F9019D2007B1A53 /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
+		0A8767781F951A39007B1A53 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +70,17 @@
 			children = (
 				0A73380B1F84714500B4799E /* AppDelegate.swift */,
 				0A73380D1F84714500B4799E /* ViewController.swift */,
+				0A8767761F9019D2007B1A53 /* TrackViewController.swift */,
+				0A8767781F951A39007B1A53 /* SignInViewController.swift */,
 				0A73380F1F84714500B4799E /* Main.storyboard */,
 				0A7338121F84714500B4799E /* Assets.xcassets */,
 				0A7338141F84714500B4799E /* LaunchScreen.storyboard */,
 				0A7338171F84714500B4799E /* Info.plist */,
+				0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */,
+				0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */,
+				0A0E05911F9FA976008AD428 /* Beacon.swift */,
+				0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */,
+				0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */,
 			);
 			path = SeniorProjectBYM;
 			sourceTree = "<group>";
@@ -136,8 +157,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */,
+				0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */,
 				0A73380E1F84714500B4799E /* ViewController.swift in Sources */,
+				0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */,
+				0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */,
+				0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */,
+				0A0E05921F9FA976008AD428 /* Beacon.swift in Sources */,
 				0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */,
+				0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
