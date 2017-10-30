@@ -8,12 +8,22 @@
 
 import UIKit
 
-class SignInViewController: UIViewController {
+import Firebase
+import GoogleSignIn
+
+class SignInViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        FirebaseApp.configure()
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
+        
+        GIDSignIn.sharedInstance().uiDelegate = self
+        
+        // Uncomment to automatically sign in the user.
+        GIDSignIn.sharedInstance().signInSilently()
     }
 
     override func didReceiveMemoryWarning() {
@@ -22,14 +32,29 @@ class SignInViewController: UIViewController {
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    @available(iOS 9.0, *)
+    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url,
+                                                 sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String,
+                                                 annotation: [:])
     }
-    */
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+        // Necessary to run on iOS 8 or older
+        return GIDSignIn.sharedInstance().handle(url,
+                                                 sourceApplication: sourceApplication,
+                                                 annotation: annotation)
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
+        if (error == nil) {
+            performSegue(withIdentifier: "signedInSegue", sender: self)
+        } else {
+            // Handle error
+        }
+    }
+    
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        // Perform any operations when the user disconnects from app here.
+    }
 
 }
