@@ -16,10 +16,7 @@ class SignInViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        FirebaseApp.configure()
-        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
-        
         GIDSignIn.sharedInstance().uiDelegate = self
         
         // Uncomment to automatically sign in the user.
@@ -51,10 +48,6 @@ class SignInViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
         } else {
             // Handle error
         }
-    }
-    
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        // Perform any operations when the user disconnects from app here.
     }
 
 }
