@@ -9,7 +9,7 @@
 import UIKit
 import os.log
 
-class AddBeaconViewController: UIViewController {
+class AddBeaconViewController: UIViewController, UITextFieldDelegate {
 
     
     @IBOutlet weak var name: UITextField!
@@ -22,6 +22,11 @@ class AddBeaconViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.name.delegate = self
+        self.major.delegate = self
+        self.minor.delegate = self
+        
+        self.navigationItem.rightBarButtonItem?.isEnabled = false
         
     }
 
@@ -30,9 +35,49 @@ class AddBeaconViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        if checkInput() {
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            self.navigationItem.rightBarButtonItem?.isEnabled = false
+        }
+        
+        if textField == name {
+            return true
+        }
+        
+        let allowedCharacters = CharacterSet.decimalDigits
+        let characterSet = CharacterSet(charactersIn: string)
+        
+        if allowedCharacters.isSuperset(of: characterSet) {
+           // print("=================================")
+            if !(textField.text?.isEmpty)! {
+                var text = textField.text
+                text?.append(string)
+                if Int(text!)! < 0 || Int(text!)! > 65535 {
+                    //print("==============Made it===============")
+                    return false
+                }
+            }
+        }
+        return allowedCharacters.isSuperset(of: characterSet)
+    }
     
+    func checkInput() -> Bool {
+        if (name.text?.isEmpty)! || (major.text?.isEmpty)! || (minor.text?.isEmpty)!{
+            return false
+        }
+        return true
+    }
     // MARK: - Navigation
+    
+    @IBAction func unwindToBeaconList(sender: UIStoryboardSegue) {
+        if let sourceTableViewController = sender.source as? AddBeaconTableViewController, let beacon = sourceTableViewController.beacon{
+            major.text = String(beacon.major)
+            minor.text = String(beacon.minor)
+        }
+    }
     
     @IBAction func cancel(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
@@ -46,10 +91,11 @@ class AddBeaconViewController: UIViewController {
             return
         }
         
+        let nam = name.text
         let maj = Int(major.text!)
         let min = Int(minor.text!)
         
-        beacon = Beacon(major: maj!, minor: min!)
+        beacon = Beacon(name: nam, major: maj!, minor: min!, latitude: nil, longitude: nil)
     }
     
     /*

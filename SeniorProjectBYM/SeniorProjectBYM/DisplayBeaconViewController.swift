@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
 class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
     
@@ -15,8 +16,9 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var major: UILabel!
     @IBOutlet weak var minor: UILabel!
     @IBOutlet weak var found: UILabel!
-    @IBOutlet weak var longitude: UILabel!
-    @IBOutlet weak var latitude: UILabel!
+    @IBOutlet weak var map: MKMapView!
+    @IBOutlet weak var ifNotSeen: UILabel!
+    
     
     var beacon : Beacon!
     var locationManager : CLLocationManager!
@@ -28,10 +30,30 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
         
+        name.text = beacon.name
         major.text = String(beacon.major)
         minor.text = String(beacon.minor)
         
+        loadMap()
         startScanningForBeaconRegion(beaconRegion: getBeaconRegion())
+    }
+    
+    func loadMap() {
+        if beacon.latitude != nil && beacon.longitude != nil {
+            let beaconCoordinates = CLLocationCoordinate2DMake(beacon.latitude!, beacon.longitude!)
+            let mapSpan = MKCoordinateSpanMake(0.002, 0.002)
+            let mapRegion = MKCoordinateRegionMake(beaconCoordinates, mapSpan)
+            
+            map.setRegion(mapRegion, animated: true)
+            
+            let beaconAnnotation = MKPointAnnotation()
+            beaconAnnotation.coordinate = beaconCoordinates
+            beaconAnnotation.title = beacon.name
+            
+            map.addAnnotation(beaconAnnotation)
+        } else {
+            ifNotSeen.text = "Beacon has not yet been seen"
+        }
     }
     
     func getBeaconRegion() -> CLBeaconRegion {
@@ -49,7 +71,7 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
         
         if beacons.count > 0 {
             found.text = "Yes"
-            locationManager.startMonitoringSignificantLocationChanges()
+            locationManager.requestLocation()
         } else {
             found.text = "No"
         }
@@ -58,8 +80,8 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let locValue:CLLocationCoordinate2D = manager.location!.coordinate
-        latitude.text = String(locValue.latitude)
-        longitude.text = String(locValue.longitude)
+        beacon.latitude = locValue.latitude
+        beacon.longitude = locValue.longitude
     }
     
     override func didReceiveMemoryWarning() {
