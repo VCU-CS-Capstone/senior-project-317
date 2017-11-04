@@ -72,6 +72,7 @@ class AddBeaconViewController: UIViewController, UITextFieldDelegate {
     }
     // MARK: - Navigation
     
+
     @IBAction func unwindToBeaconList(sender: UIStoryboardSegue) {
         if let sourceTableViewController = sender.source as? AddBeaconTableViewController, let beacon = sourceTableViewController.beacon{
             major.text = String(beacon.major)
@@ -82,6 +83,7 @@ class AddBeaconViewController: UIViewController, UITextFieldDelegate {
     @IBAction func cancel(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
+
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)

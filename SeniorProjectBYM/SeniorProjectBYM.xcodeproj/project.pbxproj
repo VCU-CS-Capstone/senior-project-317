@@ -43,7 +43,8 @@
 		64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.debug.xcconfig"; sourceTree = "<group>"; };
 		A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SeniorProjectBYM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		C86C3BE31FA776C100D0A1AF /* SeniorProjectBYM-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SeniorProjectBYM-Bridging-Header.h"; sourceTree = "<group>"; };
+		C89F1B711FA7E1CC00B81A13 /* SeniorProjectBYM-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SeniorProjectBYM-Bridging-Header.h"; sourceTree = "<group>"; };
+		C89F1B741FA7E30300B81A13 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		E1FEA97829CF8399F46B678B /* Pods-SeniorProjectBYM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.release.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +85,7 @@
 				0A73380D1F84714500B4799E /* ViewController.swift */,
 				0A8767761F9019D2007B1A53 /* TrackViewController.swift */,
 				0A8767781F951A39007B1A53 /* SignInViewController.swift */,
+				C89F1B741FA7E30300B81A13 /* SettingsViewController.swift */,
 				0A73380F1F84714500B4799E /* Main.storyboard */,
 				0A7338121F84714500B4799E /* Assets.xcassets */,
 				0A7338171F84714500B4799E /* Info.plist */,
@@ -95,7 +97,6 @@
 				0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */,
 				0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */,
 				C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */,
-				C86C3BE31FA776C100D0A1AF /* SeniorProjectBYM-Bridging-Header.h */,
 			);
 			path = SeniorProjectBYM;
 			sourceTree = "<group>";
@@ -259,6 +260,7 @@
 				0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */,
 				0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */,
 				0A73380E1F84714500B4799E /* ViewController.swift in Sources */,
+				C89F1B751FA7E30300B81A13 /* SettingsViewController.swift in Sources */,
 				0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */,
 				0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */,
 				0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */,
