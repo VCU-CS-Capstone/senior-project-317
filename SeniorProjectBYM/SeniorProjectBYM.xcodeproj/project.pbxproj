@@ -7,21 +7,45 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */; };
+		0A0E05921F9FA976008AD428 /* Beacon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05911F9FA976008AD428 /* Beacon.swift */; };
+		0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */; };
+		0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */; };
+		0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */; };
 		0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380B1F84714500B4799E /* AppDelegate.swift */; };
 		0A73380E1F84714500B4799E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380D1F84714500B4799E /* ViewController.swift */; };
 		0A7338111F84714500B4799E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A73380F1F84714500B4799E /* Main.storyboard */; };
 		0A7338131F84714500B4799E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A7338121F84714500B4799E /* Assets.xcassets */; };
-		0A7338161F84714500B4799E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A7338141F84714500B4799E /* LaunchScreen.storyboard */; };
+		0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767761F9019D2007B1A53 /* TrackViewController.swift */; };
+		0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767781F951A39007B1A53 /* SignInViewController.swift */; };
+		0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */; };
+		0AABC4A01FA7DE68009F17B7 /* AddBeaconTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */; };
+		65488472AE116FE47468C6A0 /* Pods_SeniorProjectBYM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */; };
+		C86C3BE21FA775C800D0A1AF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconTableViewCell.swift; sourceTree = "<group>"; };
+		0A0E05911F9FA976008AD428 /* Beacon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
+		0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconTableViewController.swift; sourceTree = "<group>"; };
+		0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBeaconViewController.swift; sourceTree = "<group>"; };
+		0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconViewController.swift; sourceTree = "<group>"; };
 		0A7338081F84714500B4799E /* SeniorProjectBYM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeniorProjectBYM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A73380B1F84714500B4799E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A73380D1F84714500B4799E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0A7338101F84714500B4799E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A7338121F84714500B4799E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		0A7338151F84714500B4799E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A7338171F84714500B4799E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A8767761F9019D2007B1A53 /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
+		0A8767781F951A39007B1A53 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconTableViewCell.swift; sourceTree = "<group>"; };
+		0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconTableViewController.swift; sourceTree = "<group>"; };
+		64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.debug.xcconfig"; sourceTree = "<group>"; };
+		A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SeniorProjectBYM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C89F1B711FA7E1CC00B81A13 /* SeniorProjectBYM-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SeniorProjectBYM-Bridging-Header.h"; sourceTree = "<group>"; };
+		C89F1B741FA7E30300B81A13 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		E1FEA97829CF8399F46B678B /* Pods-SeniorProjectBYM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.release.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65488472AE116FE47468C6A0 /* Pods_SeniorProjectBYM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +65,8 @@
 			children = (
 				0A73380A1F84714500B4799E /* SeniorProjectBYM */,
 				0A7338091F84714500B4799E /* Products */,
+				EC3FE6E1C34A9261E530AB2F /* Pods */,
+				C16DE2E327EC5E12F612B073 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,12 +83,39 @@
 			children = (
 				0A73380B1F84714500B4799E /* AppDelegate.swift */,
 				0A73380D1F84714500B4799E /* ViewController.swift */,
+				0A8767761F9019D2007B1A53 /* TrackViewController.swift */,
+				0A8767781F951A39007B1A53 /* SignInViewController.swift */,
+				C89F1B741FA7E30300B81A13 /* SettingsViewController.swift */,
 				0A73380F1F84714500B4799E /* Main.storyboard */,
 				0A7338121F84714500B4799E /* Assets.xcassets */,
-				0A7338141F84714500B4799E /* LaunchScreen.storyboard */,
 				0A7338171F84714500B4799E /* Info.plist */,
+				0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */,
+				0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */,
+				0A0E05911F9FA976008AD428 /* Beacon.swift */,
+				0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */,
+				0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */,
+				0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */,
+				0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */,
+				C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */,
 			);
 			path = SeniorProjectBYM;
+			sourceTree = "<group>";
+		};
+		C16DE2E327EC5E12F612B073 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EC3FE6E1C34A9261E530AB2F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */,
+				E1FEA97829CF8399F46B678B /* Pods-SeniorProjectBYM.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +125,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A73381A1F84714500B4799E /* Build configuration list for PBXNativeTarget "SeniorProjectBYM" */;
 			buildPhases = (
+				60EA4A3183CDC774497A3494 /* [CP] Check Pods Manifest.lock */,
 				0A7338041F84714500B4799E /* Sources */,
 				0A7338051F84714500B4799E /* Frameworks */,
 				0A7338061F84714500B4799E /* Resources */,
+				CB5D4592C895EDECAFDB3CC3 /* [CP] Embed Pods Frameworks */,
+				4789A7E786720F68D1685B65 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -96,6 +153,7 @@
 				TargetAttributes = {
 					0A7338071F84714500B4799E = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -123,7 +181,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A7338161F84714500B4799E /* LaunchScreen.storyboard in Resources */,
+				C86C3BE21FA775C800D0A1AF /* GoogleService-Info.plist in Resources */,
 				0A7338131F84714500B4799E /* Assets.xcassets in Resources */,
 				0A7338111F84714500B4799E /* Main.storyboard in Resources */,
 			);
@@ -131,13 +189,86 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4789A7E786720F68D1685B65 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		60EA4A3183CDC774497A3494 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SeniorProjectBYM-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CB5D4592C895EDECAFDB3CC3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0A7338041F84714500B4799E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */,
+				0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */,
 				0A73380E1F84714500B4799E /* ViewController.swift in Sources */,
+				C89F1B751FA7E30300B81A13 /* SettingsViewController.swift in Sources */,
+				0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */,
+				0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */,
+				0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */,
+				0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */,
+				0A0E05921F9FA976008AD428 /* Beacon.swift in Sources */,
 				0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */,
+				0AABC4A01FA7DE68009F17B7 /* AddBeaconTableViewController.swift in Sources */,
+				0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,14 +281,6 @@
 				0A7338101F84714500B4799E /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		0A7338141F84714500B4799E /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0A7338151F84714500B4799E /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -272,14 +395,20 @@
 		};
 		0A73381B1F84714500B4799E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YEX9EJ766R;
+				DEVELOPMENT_TEAM = 8B4QBLLSCD;
 				INFOPLIST_FILE = SeniorProjectBYM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.BYM.SeniorProjectBYM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "SeniorProjectBYM/SeniorProjectBYM-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -287,14 +416,19 @@
 		};
 		0A73381C1F84714500B4799E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E1FEA97829CF8399F46B678B /* Pods-SeniorProjectBYM.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YEX9EJ766R;
+				DEVELOPMENT_TEAM = 8B4QBLLSCD;
 				INFOPLIST_FILE = SeniorProjectBYM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.BYM.SeniorProjectBYM;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "SeniorProjectBYM/SeniorProjectBYM-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
