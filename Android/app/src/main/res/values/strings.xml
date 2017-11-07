@@ -8,4 +8,5 @@
 
     <string name="sign_out_button">Sign Out</string>
     <string name="go_back_button">Go Back</string>
+    <string name="title_activity_beacon_info_screen">BeaconInfoScreen</string>
 </resources>

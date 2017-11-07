@@ -2,19 +2,16 @@ package com.vcuseniordesign.bym;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,42 +19,79 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vcuseniordesign.bym.SettingsActivity;
-
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.RangeNotifier;
-import org.altbeacon.beacon.Region;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-public class TagInfo extends AppCompatActivity implements BeaconConsumer {
+import com.google.firebase.database.*;
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private boolean mScanning;
-    private Handler mHandler = new Handler();
-    private static final long SCAN_PERIOD = 10000;
+public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
+
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     TextView deviceInfo;
+    ListView deviceList;
     private BeaconManager beaconManager;
+    private ArrayList<Beacon> beaconList = new ArrayList<Beacon>();
+    //private ArrayList<Beacon> savedBeacons = new ArrayList<Beacon>();
+    //private ArrayList<BeaconFoundEvent> foundBeaconList = new ArrayList<BeaconFoundEvent>();
+    homeBeaconButtonAdapter deviceListAdapter;
+    private LocationManager phoneLocationManager;
+    double curLat = 0;
+    double curLong = 0;
+    private BroadcastReceiver updateReceiver;
 
     @Override
     @TargetApi(23)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tag_info);
+        setContentView(R.layout.activity_tag_info);/*
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
         beaconManager.getBeaconParsers().add(new BeaconParser("CorrectParse").setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        beaconManager.setForegroundScanPeriod(5100);
-        beaconManager.setForegroundBetweenScanPeriod(2000);
+        beaconManager.setForegroundScanPeriod(3100);
+        beaconManager.setForegroundBetweenScanPeriod(1000);
         beaconManager.setBackgroundScanPeriod(5100);
-        beaconManager.setBackgroundBetweenScanPeriod(2000);
+        beaconManager.setBackgroundBetweenScanPeriod(2000);*/
+        phoneLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        try{
+        phoneLocationManager.requestLocationUpdates(phoneLocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                curLat=location.getLatitude();
+                curLong=location.getLongitude();
+            }
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+            @Override
+            public void onProviderEnabled(String provider) {}
+            @Override
+            public void onProviderDisabled(String provider) {}
+        });}catch(SecurityException e){}
+
+        /*
+        if(getIntent().getSerializableExtra("savedBeaconList")!=null){
+            ArrayList<Beacon> updatedSaveList = new ArrayList<Beacon>((ArrayList<Beacon>) getIntent().getSerializableExtra("savedBeaconList"));
+            for(Beacon curBeaconToAdd:getSavedBeaconsFromFile()){
+                if(!updatedSaveList.contains(curBeaconToAdd)){
+                    updatedSaveList.add(curBeaconToAdd);
+                }
+            }
+            savedBeacons=updatedSaveList;
+        }else{
+            savedBeacons=getSavedBeaconsFromFile();
+        }*/
+
+
 
         //Permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -76,63 +110,97 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
             }
         }
         //end Perms
-        //Testing Estimote Code
-        //End Testing
-        BluetoothManager bluetoothManager = (BluetoothManager) this.getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
+        /*
+        for(Beacon curBeacon: savedBeacons){
+            foundBeaconList.add(new BeaconFoundEvent(curBeacon,curLat,curLong,System.currentTimeMillis()));
+        }*/
 
-        final Button deviceInfoButton = (Button) findViewById(R.id.deviceInfoButton);
+        if(getIntent().getSerializableExtra("beaconToUnpair")!=null){
+            BeaconFoundEvent beaconToUnpair = (BeaconFoundEvent) getIntent().getSerializableExtra("beaconToUnpair");
+            Beacon beaconObjToCheck=beaconToUnpair.getBeaconFound();
+            for(Beacon b: ((BeaconApplication)getApplication()).getSavedBeacons()){
+                if (b.equals(beaconObjToCheck)){
+                    ((BeaconApplication)getApplication()).getSavedBeacons().remove(b);
+                }
+            }
+            for(BeaconFoundEvent bfe:((BeaconApplication)getApplication()).getFoundBeaconEvents()){
+                if(bfe.getBeaconFound().equals(beaconObjToCheck)){
+                    ((BeaconApplication)getApplication()).getFoundBeaconEvents().remove(bfe);
+                }
+            }
+        }
+        deviceList = (ListView) findViewById(R.id.deviceInfoList);
+        deviceListAdapter = new homeBeaconButtonAdapter(this, android.R.layout.simple_list_item_1, beaconList);
+        if (((BeaconApplication)getApplication()).getSavedBeacons().size() == 0){ deviceListAdapter.add(null);
+        }else{
+            ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+            for(Beacon curBeacon:savedBeaconCopy){
+                beaconList.add(curBeacon);
+                deviceListAdapter.add(curBeacon);
+            }
+        }
+
+        deviceList.setAdapter(deviceListAdapter);
         deviceInfo = (TextView) findViewById(R.id.deviceInfoText);
         deviceInfo.setFocusable(false);
         deviceInfo.setFocusableInTouchMode(false);
         deviceInfo.setClickable(false);
-        deviceInfoButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
 
-                //scanLeDevice(true);
-                /*deviceInfo.setFocusable(false);
-                deviceInfo.setFocusableInTouchMode(false);
-                deviceInfo.setClickable(false);*/
+        final Button addButton = (Button) findViewById(R.id.addNewDeviceButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAllDeviceList();
             }
         });
-
-
+        final Button allMapButton = (Button) findViewById(R.id.AllMapButton);
+        allMapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                launchAllMap();
+            }
+        });
         final Button button = (Button) findViewById(R.id.settings_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 launchSettingsActivity();
             }
         });
+        final Button clearButton = (Button) findViewById(R.id.clearSavedButton);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                deleteBeaconFile();
+                deviceInfo.append("Saved Beacons Removed");
+                ((BeaconApplication)getApplication()).getSavedBeacons().clear();
+                deviceListAdapter.clear();
+            }
+        });
+
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference newDBRef = db.getReference();
+        newDBRef.child("observations").child("123:456").child("1234").child("latitude").setValue(2);
+        newDBRef.child("observations").child("111:111").child("111").child("latitude").setValue(5);
+
+        updateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getStringExtra("UpdateIntent")!=null) {
+                    deviceListAdapter.clear();
+                    ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+                    for (Beacon b : savedBeaconCopy) {
+                        deviceListAdapter.add(b);
+                    }
+                }
+            }
+        };
     }
 
-    private ScanCallback mLeScanCallback = new ScanCallback() {
-        int deviceCount=0;
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            deviceCount++;
-            BluetoothDevice curDevice = result.getDevice();
-            Beacon testBeacon;
-            //testBeacon =beaconManager.getBeaconParsers().get(0).fromScanData(result.getScanRecord().getBytes(),result.getRssi(),result.getDevice());
-            //deviceInfo.append(beaconManager.getBeaconParsers().get(0).fromScanData(result.getScanRecord().getBytes(),result.getRssi(),result.getDevice()).toString());
-            //if(testBeacon==null)deviceInfo.append("There is no hope");
-            //deviceInfo.append(testBeacon.getId1().toString());
-            deviceInfo.append("\n"+"Device: " + Integer.toString(deviceCount)+ " ID: "+curDevice.getAddress()+  "\n");
-            //deviceInfo.append(curDevice.toString());
-            //deviceInfo.append(result.toString());
-        }
+    public void onStop(){
+        super.onStop();
+        storeSavedBeaconsInFile(((BeaconApplication)getApplication()).getSavedBeacons());
+        Intent stopBeaconService = new Intent(this, BeaconTracker.class);
+        stopService(stopBeaconService);
+    }
 
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            super.onBatchScanResults(results);
-        }
-
-        @Override
-        public void onScanFailed(int errorCode) {
-            super.onScanFailed(errorCode);
-        }
-    };
-
+    /*
     @Override
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier(new RangeNotifier() {
@@ -142,11 +210,62 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
                 try {
                     if (beacons.size() > 0) {
                         for (Beacon b : beacons) {
-                            deviceInfo.append(b.getId1().toString()+" \n"+"TimeDetected" + System.currentTimeMillis()+" \n");
+                            final Beacon curB = b;
+                            if (((BeaconApplication)getApplication()).getSavedBeacons().size() != 0) {
+                                if (!beaconList.contains(b)&&((BeaconApplication)getApplication()).getSavedBeacons().contains(b)) {
+                                    beaconList.add(b);
+                                    try{
+                                        BeaconFoundEvent newEvent = new BeaconFoundEvent(b,curLat, curLong,System.currentTimeMillis());
+                                        ((BeaconApplication)getApplication()).getFoundBeaconEvents().add(newEvent);}catch(SecurityException e){}
+                                    final int deviceCount = beaconList.size() - 1;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            deviceInfo.append("Added" + "\n");
+                                            try {
+                                                deviceListAdapter.add(curB);
+                                                deviceListAdapter.add("Device " + deviceCount + "\n" +"Latitude: " +(phoneLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude())
+                                                        + " Longitude: "+ (phoneLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude())+ "\n Current Time: "+ System.currentTimeMillis());
+                                            } catch (SecurityException e) {
+                                            }
+                                        }
+                                    });
+
+                                    //deviceInfo.append(b.getId1().toString()+" \n"+"TimeDetected" + System.currentTimeMillis()+" \n");
+                                } else {
+                                    if (((BeaconApplication)getApplication()).getSavedBeacons().contains(b)){
+                                        BeaconFoundEvent beaconEventToUpdate=((BeaconApplication)getApplication()).getFoundBeaconEvents().get(beaconList.indexOf(b));
+                                        try {
+                                            beaconEventToUpdate.setLastLat(curLat);
+                                            beaconEventToUpdate.setLastLong(curLong);
+                                            beaconEventToUpdate.setLastTime(System.currentTimeMillis());
+                                        }catch(SecurityException e){}
+                                        final int curElement = beaconList.indexOf(b);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    deviceListAdapter.remove(deviceListAdapter.getItem(curElement));
+                                                    deviceListAdapter.insert(curB, curElement);
+                                                    deviceListAdapter.insert("Device " + Integer.toString(curElement) + "\n" + "Latitude: " + (phoneLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude())
+                                                            + " Longitude: " + (phoneLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()) + "\n Current Time: " + System.currentTimeMillis(), curElement);
+
+                                                } catch (SecurityException e) {
+                                                }
+                                            }
+                                        });
+                                    }
+                                    //deviceInfo.append(b.getId1().toString()+" \n"+"TimeDetected" + System.currentTimeMillis()+" \n");
+                                }
+                            } else {
+
+                            }
+                            //end of single beacon stuff
                         }
+                        //end of all beacons per scan
                     }
                 } catch (Exception ex) {
-                    //Log.e(TAG_BEACON_ACTIVITY, "Error was thrown: " + ex.getMessage());
+                    Log.e("SeniorDesign", "Error was thrown: " + ex.getMessage());
                 }
             }
         });
@@ -155,30 +274,8 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
         } catch (RemoteException e) {
             //Log.e(TAG_BEACON_ACTIVITY, "Error was thrown: " + e.getMessage());
         }
-    }
+    }*/
 
-    private void scanLeDevice(final boolean enable) {
-
-        final BluetoothLeScanner bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-
-        if (enable) {
-            // Stops scanning after a pre-defined scan period.
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mScanning = false;
-
-                    bluetoothLeScanner.stopScan(mLeScanCallback);
-                }
-            }, SCAN_PERIOD);
-
-            mScanning = true;
-            bluetoothLeScanner.startScan(mLeScanCallback);
-        } else {
-            mScanning = false;
-            bluetoothLeScanner.stopScan(mLeScanCallback);
-        }
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[],
@@ -204,9 +301,70 @@ public class TagInfo extends AppCompatActivity implements BeaconConsumer {
         }
     }
 
+    private void deleteBeaconFile(){
+        try{
+            File fileToDelete  = new File(this.getFilesDir(), "myBeacons.txt");
+            fileToDelete.delete();
+        }catch(Exception e){}
+    }
+
+    private void storeSavedBeaconsInFile(ArrayList<Beacon> savedBeaconList){
+        try{
+            FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
+            String curBeaconInfo;
+            for(Beacon curBeacon:savedBeaconList){
+                curBeaconInfo = curBeacon.getId1()+","+curBeacon.getId2()+","+curBeacon.getId3()+"\n";
+                fileOutput.write(curBeaconInfo.getBytes());
+            }
+            fileOutput.close();
+        }catch(SecurityException se){}
+        catch (Exception e){}
+    }
+
+    private ArrayList<Beacon> getSavedBeaconsFromFile(){
+        ArrayList<Beacon> acquiredSavedBeacons = new ArrayList<Beacon>();
+        try{
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    openFileInput("myBeacons.txt")));
+            String curBeaconRow;
+            while((curBeaconRow = input.readLine())!=null){
+                String[] beaconIds;
+                beaconIds = curBeaconRow.split(",");
+                Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
+                acquiredSavedBeacons.add(beaconToAdd);
+            }
+        }catch(FileNotFoundException fnf){
+
+        }catch(Exception e){}
+        return acquiredSavedBeacons;
+    }
 
     private void launchSettingsActivity() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+    private void launchAllDeviceList(){
+        Intent intent = new Intent(this, AvailableBeaconScreen.class);
+        intent.putExtra("savedBeaconList",((BeaconApplication)getApplication()).getSavedBeacons());
+        startActivity(intent);
+    }
+
+    public void launchMoreBeaconInfo(Beacon b){
+        BeaconFoundEvent eventToExplore= new BeaconFoundEvent();
+        for(BeaconFoundEvent curEvent:((BeaconApplication)getApplication()).getFoundBeaconEvents()){
+            if(b.equals(curEvent.getBeaconFound())){
+                eventToExplore=curEvent;
+            }
+        }
+        Intent intent = new Intent(this, BeaconInfoScreen.class);
+        intent.putExtra("beaconInfo",eventToExplore);
+        startActivity(intent);
+    }
+
+    private void launchAllMap(){
+        Intent intent = new Intent(this,AllMap.class);
+        startActivity(intent);
+    }
+
 }
+
