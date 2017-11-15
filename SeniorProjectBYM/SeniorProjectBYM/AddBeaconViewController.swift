@@ -97,7 +97,7 @@ class AddBeaconViewController: UIViewController, UITextFieldDelegate {
         let maj = Int(major.text!)
         let min = Int(minor.text!)
         
-        beacon = Beacon(name: nam, major: maj!, minor: min!, latitude: nil, longitude: nil)
+        beacon = Beacon(name: nam, major: maj!, minor: min!, latitude: nil, longitude: nil, color: "white")
     }
     
     /*

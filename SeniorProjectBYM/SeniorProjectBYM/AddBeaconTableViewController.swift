@@ -46,6 +46,7 @@ class AddBeaconTableViewController: UITableViewController {
     func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
         
         if beacons.count > 0 {
+            print(beacons.count)
             for var i in (0..<beacons.count) {
                 let beacon = beacons[i]
                 self.beacons[i] = Beacon(major: Int(beacon.major), minor: Int(beacon.minor))

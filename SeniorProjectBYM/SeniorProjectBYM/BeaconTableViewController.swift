@@ -101,9 +101,29 @@ class BeaconTableViewController: UITableViewController, CLLocationManagerDelegat
         }
 
         let beacon = beacons[indexPath.row]
-        cell.major.text = String(beacon.major)
-        cell.minor.text = String(beacon.minor)
-
+        cell.name.text = String(beacon.name!)
+        
+        
+        
+        let cellColor = String(beacon.color!)
+        
+        switch cellColor {
+        case "red":
+            cell.backgroundColor = UIColor.red
+        case "blue":
+            cell.backgroundColor = UIColor.blue
+        case "yellow":
+            cell.backgroundColor = UIColor.yellow
+        case "gray":
+            cell.backgroundColor = UIColor.gray
+        case "green":
+            cell.backgroundColor = UIColor.green
+        case "black":
+            cell.backgroundColor = UIColor.black
+            cell.name.textColor = UIColor.white
+        default:           print("Color is white")
+        }
+        
         return cell
     }
     
@@ -193,8 +213,10 @@ class BeaconTableViewController: UITableViewController, CLLocationManagerDelegat
         beacon1.name = "lemon"
         beacon1.latitude = 37.545034
         beacon1.longitude = -77.448309
+        beacon1.color = "yellow"
         let beacon2 = Beacon(major: 7767, minor: 5360)
         beacon2.name = "chair"
+        beacon2.color = "black"
         let beacon3 = Beacon(major: 43751, minor: 58033)
         beacon3.name = "car"
         

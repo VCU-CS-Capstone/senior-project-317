@@ -13,9 +13,6 @@ import MapKit
 class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var name: UILabel!
-    @IBOutlet weak var major: UILabel!
-    @IBOutlet weak var minor: UILabel!
-    @IBOutlet weak var found: UILabel!
     @IBOutlet weak var map: MKMapView!
     @IBOutlet weak var ifNotSeen: UILabel!
     
@@ -31,11 +28,29 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         
         name.text = beacon.name
-        major.text = String(beacon.major)
-        minor.text = String(beacon.minor)
+        
+        let viewColor = String(beacon.color!)
+        
+        switch viewColor {
+        case "red":
+            self.view.backgroundColor = UIColor.red
+        case "blue":
+            self.view.backgroundColor = UIColor.blue
+        case "yellow":
+            self.view.backgroundColor = UIColor.yellow
+        case "gray":
+            self.view.backgroundColor = UIColor.gray
+        case "green":
+            self.view.backgroundColor = UIColor.green
+        case "black":
+            self.view.backgroundColor = UIColor.black
+            name.textColor = UIColor.white
+            ifNotSeen.textColor = UIColor.white
+        default:           print("Color is white")
+        }
         
         loadMap()
-        startScanningForBeaconRegion(beaconRegion: getBeaconRegion())
+        //startScanningForBeaconRegion(beaconRegion: getBeaconRegion())
     }
     
     func loadMap() {
@@ -55,7 +70,7 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
             ifNotSeen.text = "Beacon has not yet been seen"
         }
     }
-    
+    /*
     func getBeaconRegion() -> CLBeaconRegion {
         let beaconRegion = CLBeaconRegion.init(proximityUUID: UUID.init(uuidString: "D0D3FA86-CA76-45EC-9BD9-6AF4F6016926")!, major: CLBeaconMajorValue(beacon.major), minor: CLBeaconMinorValue(beacon.minor), identifier: "com.BYM.SeniorProjectBYM.myRegion")
         return beaconRegion
@@ -88,7 +103,7 @@ class DisplayBeaconViewController: UIViewController, CLLocationManagerDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    */
 
     /*
     // MARK: - Navigation

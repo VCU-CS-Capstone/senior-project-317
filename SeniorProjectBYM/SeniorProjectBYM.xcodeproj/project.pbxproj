@@ -43,7 +43,6 @@
 		64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.debug.xcconfig"; sourceTree = "<group>"; };
 		A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SeniorProjectBYM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		C89F1B711FA7E1CC00B81A13 /* SeniorProjectBYM-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SeniorProjectBYM-Bridging-Header.h"; sourceTree = "<group>"; };
 		C89F1B741FA7E30300B81A13 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		E1FEA97829CF8399F46B678B /* Pods-SeniorProjectBYM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.release.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -260,7 +259,6 @@
 				0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */,
 				0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */,
 				0A73380E1F84714500B4799E /* ViewController.swift in Sources */,
-				C89F1B751FA7E30300B81A13 /* SettingsViewController.swift in Sources */,
 				0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */,
 				0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */,
 				0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */,
@@ -401,7 +399,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8B4QBLLSCD;
+				DEVELOPMENT_TEAM = YEX9EJ766R;
 				INFOPLIST_FILE = SeniorProjectBYM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.BYM.SeniorProjectBYM;
@@ -422,7 +420,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 8B4QBLLSCD;
+				DEVELOPMENT_TEAM = YEX9EJ766R;
 				INFOPLIST_FILE = SeniorProjectBYM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.BYM.SeniorProjectBYM;

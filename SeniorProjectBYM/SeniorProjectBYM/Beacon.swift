@@ -16,18 +16,21 @@ class Beacon: NSObject, NSCoding {
     var minor: Int
     var latitude: Double?
     var longitude: Double?
+    var color: String?
     
     init(major: Int, minor: Int){
         self.major = major
         self.minor = minor
+        color = "white"
     }
     
-    init(name: String?, major: Int, minor: Int, latitude: Double?, longitude: Double?) {
+    init(name: String?, major: Int, minor: Int, latitude: Double?, longitude: Double?, color: String?) {
         self.name = name
         self.major = major
         self.minor = minor
         self.latitude = latitude
         self.longitude = longitude
+        self.color = color
     }
     
     struct PropertyKey {
@@ -36,6 +39,7 @@ class Beacon: NSObject, NSCoding {
         static let minor = "minor"
         static let latitude = "latitude"
         static let longitude = "longitude"
+        static let color = "color"
     }
     
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -47,6 +51,7 @@ class Beacon: NSObject, NSCoding {
         aCoder.encode(minor, forKey: PropertyKey.minor)
         aCoder.encode(latitude, forKey: PropertyKey.latitude)
         aCoder.encode(longitude, forKey: PropertyKey.longitude)
+        aCoder.encode(color, forKey: PropertyKey.color)
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
@@ -61,8 +66,9 @@ class Beacon: NSObject, NSCoding {
         }
         let latitude = aDecoder.decodeDouble(forKey: PropertyKey.latitude)
         let longitude = aDecoder.decodeDouble(forKey: PropertyKey.longitude)
+        let color = aDecoder.decodeObject(forKey: PropertyKey.color) as? String
         
-        self.init(name: name, major: major, minor: minor, latitude: latitude, longitude: longitude)
+        self.init(name: name, major: major, minor: minor, latitude: latitude, longitude: longitude, color: color)
         
     }
 }
