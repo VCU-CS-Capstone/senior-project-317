@@ -5,7 +5,7 @@ import org.altbeacon.beacon.Beacon;
 import java.io.Serializable;
 
 public class BeaconFoundEvent implements Serializable {
-    String beaconNickname;
+    String beaconNickname = "empty";
     Beacon beaconFound;
     double lastLat;
     double lastLong;

@@ -15,8 +15,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.estimote.coresdk.service.BeaconService;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -33,6 +36,8 @@ public class BeaconTracker extends Service implements BeaconConsumer {
     BeaconManager beaconManager;
     LocationManager phoneLocationManager;
     double curLat, curLong;
+    Thread updateThread;
+    boolean[] isServiceStillRunning = new boolean[4];
 
     @Override
     public void onCreate(){
@@ -58,6 +63,78 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 @Override
                 public void onProviderDisabled(String provider) {}
             });}catch(SecurityException e){}
+        runUpdateThread();
+    }
+
+    public void runUpdateThread(){
+
+        serviceIsStillRunning();
+        updateThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while(isServiceStillRunning[0] || isServiceStillRunning[1] || isServiceStillRunning[2] || isServiceStillRunning[3]){
+                    //doStuff
+
+                    ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
+                    BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
+                    foundBeaconEventCopy.add(locationBeacon);
+                    Log.d("UpdateThread","updateThreadisStillRunning"+isServiceStillRunning[0]+isServiceStillRunning[1]+isServiceStillRunning[2]+isServiceStillRunning[3]);
+                    FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    final DatabaseReference newDBRef = db.getReference();
+
+                    Long curTime = System.currentTimeMillis();
+                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("latitude").setValue(curLat);
+                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+
+                    for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
+                        Log.d("UpdateThread","foundBeaconEventSize = " + foundBeaconEventCopy.size());
+
+                        final BeaconFoundEvent bfeToUse=bfe;
+                        try {
+
+                            newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString() + ":" + bfe.getBeaconFound().getId3().toString())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dbSnapShot) {
+                                    if (!dbSnapShot.hasChild(Long.toString(bfeToUse.getLastTime()))) {
+                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
+                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                .child(Long.toString(bfeToUse.getLastTime())).child("longitude").setValue(bfeToUse.getLastLong());
+                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue(bfeToUse.getBeaconNickname());
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {}
+                            });
+
+
+                        }catch (Exception e){}
+                    }
+                    //((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
+                    Log.d("UpdateThread","We got this far");
+
+                    sleep(10000);
+
+
+
+                    for (int k = 0; k < isServiceStillRunning.length; k++) {
+                        if (isServiceStillRunning[k] == true) {
+                            isServiceStillRunning[k] = false;
+                            k = isServiceStillRunning.length;
+                        }
+                    }
+                }
+                }catch(Exception e){
+                    Log.d("UpdateThread",e.toString());
+                    e.printStackTrace();
+                }
+                }
+        };
+        updateThread.start();
     }
 
     @Override
@@ -69,11 +146,12 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>)((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
                 if (beacons.size() > 0) {
                     for(Beacon b :beacons) {
-                        if (!foundBeaconsCopy.contains(b)){
+                        Log.d("FoundBeacon","THE FOUND BEACON UUID IS : "+b.getId1());
+                        if (!foundBeaconsCopy.contains(b)&&b.getId1().toString().equals("d0d3fa86-ca76-45ec-9bd9-6af4f6016926")){
                             foundBeaconsCopy.add(b);
                             foundBeaconEventCopy.add(new BeaconFoundEvent(b,curLat,curLong,System.currentTimeMillis()));
                         }else{
-                        if(foundBeaconsCopy.contains(b)){
+                        if(foundBeaconsCopy.contains(b)&&b.getId1().toString().equals("d0d3fa86-ca76-45ec-9bd9-6af4f6016926")){
                             for(BeaconFoundEvent bfe:((BeaconApplication) getApplication()).getFoundBeaconEvents()){
                                 if(bfe.getBeaconFound().equals(b)){
                                     foundBeaconEventCopy.remove(bfe);
@@ -85,20 +163,11 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                     }
                 }
                 Log.d("BaconUpdatingService","WE ARE ABOUT TO SEND THE UPDATE INTENT");
+                serviceIsStillRunning();
                 BeaconApplication curApp=((BeaconApplication)getApplication());
                 curApp.setFoundBeacons(foundBeaconsCopy);
                 curApp.setFoundBeaconEvents(foundBeaconEventCopy);
 
-                FirebaseDatabase db = FirebaseDatabase.getInstance();
-                DatabaseReference newDBRef = db.getReference();
-                for(BeaconFoundEvent bfe:foundBeaconEventCopy){
-                    newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString()+":"+bfe.getBeaconFound().getId3().toString())
-                            .child(Long.toString(bfe.getLastTime())).child("latitude").setValue(bfe.getLastLat());
-                    newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString()+":"+bfe.getBeaconFound().getId3().toString())
-                            .child(Long.toString(bfe.getLastTime())).child("longitude").setValue(bfe.getLastLong());
-                    newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString()+":"+bfe.getBeaconFound().getId3().toString())
-                            .child(Long.toString(bfe.getLastTime())).child("message").setValue(bfe.getBeaconNickname());
-                }
                 Intent updateListIntent = new Intent();
                 updateListIntent.setAction("com.vcuseniordesign.bym");
                 updateListIntent.putExtra("UpdateIntent","UPDATE");
@@ -117,6 +186,12 @@ public class BeaconTracker extends Service implements BeaconConsumer {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void serviceIsStillRunning(){
+        for(int k =0;k<isServiceStillRunning.length;k++){
+            isServiceStillRunning[k]=true;
+        }
     }
 
 }

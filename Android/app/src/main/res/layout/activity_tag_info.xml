@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/deviceInfoText"
         android:layout_width="114dp"
-        android:layout_height="364dp"
+        android:layout_height="281dp"
         android:layout_marginBottom="74dp"
         android:ems="10"
         android:inputType="textMultiLine"
@@ -81,4 +81,13 @@
         android:text="AllMaps"
         app:layout_constraintStart_toEndOf="@+id/deviceInfoList"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/heatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heatmap"
+        tools:layout_editor_absoluteX="249dp"
+        tools:layout_editor_absoluteY="62dp" />
+
 </android.support.constraint.ConstraintLayout>

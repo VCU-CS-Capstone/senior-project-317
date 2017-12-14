@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -158,6 +159,12 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                 launchAllMap();
             }
         });
+        final Button heatmapButton = (Button) findViewById(R.id.heatButton);
+        heatmapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                launchHeatMap();
+            }
+        });
         final Button button = (Button) findViewById(R.id.settings_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -176,8 +183,10 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference newDBRef = db.getReference();
-        newDBRef.child("observations").child("123:456").child("1234").child("latitude").setValue(2);
-        newDBRef.child("observations").child("111:111").child("111").child("latitude").setValue(5);
+        //newDBRef.child("observations").child("123:456").child("1234").child("latitude").setValue(2);
+        //newDBRef.child("observations").child("111:111").child("111").child("latitude").setValue(5);
+        //newDBRef.child("observations").child("51584:65326").removeValue();
+        //newDBRef.child("observations").child("523:32629").removeValue();
 
         updateReceiver = new BroadcastReceiver() {
             @Override
@@ -191,13 +200,15 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                 }
             }
         };
+
     }
 
     public void onStop(){
         super.onStop();
         storeSavedBeaconsInFile(((BeaconApplication)getApplication()).getSavedBeacons());
-        Intent stopBeaconService = new Intent(this, BeaconTracker.class);
-        stopService(stopBeaconService);
+        storeFoundBeaconsInFile(((BeaconApplication)getApplication()).getFoundBeaconEvents());
+        //Intent stopBeaconService = new Intent(this, BeaconTracker.class);
+        //stopService(stopBeaconService);
     }
 
     /*
@@ -305,6 +316,10 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         try{
             File fileToDelete  = new File(this.getFilesDir(), "myBeacons.txt");
             fileToDelete.delete();
+            fileToDelete  = new File(this.getFilesDir(), "myBFE.txt");
+            fileToDelete.delete();
+
+
         }catch(Exception e){}
     }
 
@@ -313,7 +328,31 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
             String curBeaconInfo;
             for(Beacon curBeacon:savedBeaconList){
-                curBeaconInfo = curBeacon.getId1()+","+curBeacon.getId2()+","+curBeacon.getId3()+"\n";
+
+                curBeaconInfo = curBeacon.getId1()+","
+                        +curBeacon.getId2()+","
+                        +curBeacon.getId3()+","
+                        +"\n";
+                fileOutput.write(curBeaconInfo.getBytes());
+            }
+            fileOutput.close();
+        }catch(SecurityException se){}
+        catch (Exception e){}
+    }
+
+    private void storeFoundBeaconsInFile(ArrayList<BeaconFoundEvent> savedBFEList){
+        try{
+            FileOutputStream fileOutput = this.openFileOutput("myBFE.txt", Context.MODE_PRIVATE);
+            String curBeaconInfo;
+            for(BeaconFoundEvent curBFE:savedBFEList){
+                    Beacon curBeacon = curBFE.getBeaconFound();
+                    curBeaconInfo = curBeacon.getId1()+","
+                            +curBeacon.getId2()+","
+                            +curBeacon.getId3()+","
+                            +curBFE.getLastLat()+","
+                            +curBFE.getLastLong()+","
+                            +curBFE.getLastTime()
+                            +"\n";
                 fileOutput.write(curBeaconInfo.getBytes());
             }
             fileOutput.close();
@@ -350,8 +389,12 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
     }
 
     public void launchMoreBeaconInfo(Beacon b){
+        Log.d("LaunchingMoreBeacon","Current beacon is "+b.getId1()+" : "+b.getId2()+" : "+b.getId3());
         BeaconFoundEvent eventToExplore= new BeaconFoundEvent();
-        for(BeaconFoundEvent curEvent:((BeaconApplication)getApplication()).getFoundBeaconEvents()){
+        ArrayList<BeaconFoundEvent> curBeaconList = (ArrayList<BeaconFoundEvent>)((BeaconApplication)getApplication()).getFoundBeaconEvents().clone();
+        for(BeaconFoundEvent curEvent:curBeaconList){
+            Log.d("LaunchingMoreBeacon","Current beacon is "+b.getId1()+" : "+b.getId2()+" : "+b.getId3());
+            Log.d("LaunchingMoreBeacon","Beacon to find is "+curEvent.getBeaconFound().getId1()+" : "+curEvent.getBeaconFound().getId2()+" : "+curEvent.getBeaconFound().getId3());
             if(b.equals(curEvent.getBeaconFound())){
                 eventToExplore=curEvent;
             }
@@ -363,6 +406,10 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
     private void launchAllMap(){
         Intent intent = new Intent(this,AllMap.class);
+        startActivity(intent);
+    }
+    private void launchHeatMap(){
+        Intent intent = new Intent(this,heatMapActivity.class);
         startActivity(intent);
     }
 

@@ -18,6 +18,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
+import org.altbeacon.beacon.Beacon;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 /**
  * Code based on tutorial at https://developers.google.com/identity/sign-in/android/sign-in
  *
@@ -59,12 +66,52 @@ public class SignInActivity extends AppCompatActivity implements
                 .requestEmail()
                 .build();
 
+        ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
+        ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
+
         // Build a GoogleApiClient with access to the Google Sign-In API and the
         // options specified by gso.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+    }
+
+    private ArrayList<Beacon> getSavedBeaconsFromFile(){
+        ArrayList<Beacon> acquiredSavedBeacons = new ArrayList<Beacon>();
+        try{
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    openFileInput("myBeacons.txt")));
+            String curBeaconRow;
+            while((curBeaconRow = input.readLine())!=null){
+                String[] beaconIds;
+                beaconIds = curBeaconRow.split(",");
+                Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
+                acquiredSavedBeacons.add(beaconToAdd);
+            }
+        }catch(FileNotFoundException fnf){
+
+        }catch(Exception e){}
+        return acquiredSavedBeacons;
+    }
+
+    private ArrayList<BeaconFoundEvent> getFoundBeaconsFromFile(){
+        ArrayList<BeaconFoundEvent> acquiredSavedBFE = new ArrayList<BeaconFoundEvent>();
+        try{
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    openFileInput("myBFE.txt")));
+            String curBeaconRow;
+            while((curBeaconRow = input.readLine())!=null){
+                String[] bfeInfo;
+                bfeInfo = curBeaconRow.split(",");
+                Beacon beaconToAdd = new Beacon.Builder().setId1(bfeInfo[0]).setId2(bfeInfo[1]).setId3(bfeInfo[2]).build();
+                BeaconFoundEvent bfeToAdd = new BeaconFoundEvent(beaconToAdd,Double.parseDouble(bfeInfo[3]),Double.parseDouble(bfeInfo[4]),Long.parseLong(bfeInfo[5]));
+                acquiredSavedBFE.add(bfeToAdd);
+            }
+        }catch(FileNotFoundException fnf){
+
+        }catch(Exception e){}
+        return acquiredSavedBFE;
     }
 
     @Override
