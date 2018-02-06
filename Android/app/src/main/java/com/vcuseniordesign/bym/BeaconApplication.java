@@ -1,5 +1,5 @@
 package com.vcuseniordesign.bym;
-
+import android.util.Log;
 import android.app.Application;
 import android.content.Intent;
 

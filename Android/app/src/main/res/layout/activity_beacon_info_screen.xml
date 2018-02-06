@@ -16,7 +16,7 @@
         android:layout_marginStart="36dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Keys"
+        android:text="Name"
         app:layout_constraintBottom_toTopOf="@+id/IDLabel"
         app:layout_constraintEnd_toStartOf="@+id/saveNicknameButton"
         app:layout_constraintStart_toStartOf="parent" />

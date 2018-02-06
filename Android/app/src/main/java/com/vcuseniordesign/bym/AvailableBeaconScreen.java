@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.LocationManager;
 import android.os.RemoteException;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,8 +42,11 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
         setContentView(R.layout.activity_available_beacon_screen);
 
         availableDeviceDebug = (TextView) findViewById(R.id.availableDeviceDebug);
+        availableDeviceDebug.setVisibility(View.GONE);
 
         availableDevices = (ListView) findViewById(R.id.availableDevicesList);
+        availableDevices.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
         phoneLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         deviceListAdapter = new BeaconButtonAdapter(this, android.R.layout.simple_list_item_1, beaconList);
         availableDevices.setAdapter(deviceListAdapter);
