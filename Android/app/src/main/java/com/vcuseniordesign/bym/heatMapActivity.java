@@ -70,6 +70,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
         };
         lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
 
+        //db.goOffline();
     }
 
     public void onMapReady(GoogleMap googleMap) {

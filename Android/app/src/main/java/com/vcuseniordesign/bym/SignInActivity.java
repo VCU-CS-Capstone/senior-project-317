@@ -17,6 +17,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.altbeacon.beacon.Beacon;
 
@@ -53,6 +55,7 @@ public class SignInActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.sign_in_status);
@@ -187,6 +190,7 @@ public class SignInActivity extends AppCompatActivity implements
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             mStatusTextView.setText(R.string.signed_in);
+
 
             Intent intent = new Intent(this, TagInfo.class);
             startActivity(intent);

@@ -37,7 +37,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
     LocationManager phoneLocationManager;
     double curLat, curLong;
     Thread updateThread;
-    boolean[] isServiceStillRunning = new boolean[4];
+    boolean[] isServiceStillRunning = new boolean[]{true,true,true,true};
 
     @Override
     public void onCreate(){
@@ -63,6 +63,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 @Override
                 public void onProviderDisabled(String provider) {}
             });}catch(SecurityException e){}
+        Log.d("StartingService","We are starting the beaconTracker service");
         runUpdateThread();
     }
 
@@ -77,18 +78,27 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                     //doStuff
 
                     ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
-                    BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
-                    foundBeaconEventCopy.add(locationBeacon);
+                    //BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
+                    //foundBeaconEventCopy.add(locationBeacon);
+
+                    Log.d("UpdateThreadBeaconSize","foundBeaconEventSize = " + foundBeaconEventCopy.size());
+                    for(BeaconFoundEvent tempBFE:foundBeaconEventCopy){
+                        Log.d("UpdateThreadBeaconSize","UUID: " +tempBFE.getBeaconFound().getId1()+"\n Major: "+tempBFE.getBeaconFound().getId2()+"\n Minor: "+tempBFE.getBeaconFound().getId3());
+                    }
+
                     Log.d("UpdateThread","updateThreadisStillRunning"+isServiceStillRunning[0]+isServiceStillRunning[1]+isServiceStillRunning[2]+isServiceStillRunning[3]);
                     FirebaseDatabase db = FirebaseDatabase.getInstance();
                     final DatabaseReference newDBRef = db.getReference();
 
+                    //db.goOnline();
+
                     Long curTime = System.currentTimeMillis();
-                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("latitude").setValue(curLat);
-                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+                    Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
+                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
+                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
 
                     for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
-                        Log.d("UpdateThread","foundBeaconEventSize = " + foundBeaconEventCopy.size());
+
 
                         final BeaconFoundEvent bfeToUse=bfe;
                         try {
@@ -116,6 +126,8 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                     }
                     //((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
                     Log.d("UpdateThread","We got this far");
+
+                    db.goOffline();
 
                     sleep(10000);
 

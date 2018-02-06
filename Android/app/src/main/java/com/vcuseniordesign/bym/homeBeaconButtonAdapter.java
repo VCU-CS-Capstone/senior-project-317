@@ -40,7 +40,7 @@ public class homeBeaconButtonAdapter extends ArrayAdapter<Beacon> {
             final Button mainButton = (Button) v.findViewById(R.id.MainButton);
 
             if(mainButton!=null){
-                mainButton.setText(curBeacon.getId2().toString()+"\n"+System.currentTimeMillis());
+                mainButton.setText("Major: " +curBeacon.getId2().toString()+"\n"+"Minor: "+curBeacon.getId3());
                 mainButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         curTagScreen.launchMoreBeaconInfo(curBeacon);

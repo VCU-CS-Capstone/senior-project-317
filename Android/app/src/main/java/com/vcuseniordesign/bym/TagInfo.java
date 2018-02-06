@@ -38,7 +38,6 @@ import com.google.firebase.database.*;
 
 public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     TextView deviceInfo;
     ListView deviceList;
     private BeaconManager beaconManager;
@@ -104,7 +103,31 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                 builder.setPositiveButton(android.R.string.ok, null);
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     public void onDismiss(DialogInterface dialog) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+                    }
+                });
+                builder.show();
+            }
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Please grant location access so this app can detect beacons.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    public void onDismiss(DialogInterface dialog) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+                    }
+                });
+                builder.show();
+            }
+            if (this.checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs Bluetooth enabled");
+                builder.setMessage("Please turn on bluetooth so this app can detect beacons.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    public void onDismiss(DialogInterface dialog) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 3);
                     }
                 });
                 builder.show();
@@ -143,6 +166,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
         deviceList.setAdapter(deviceListAdapter);
         deviceInfo = (TextView) findViewById(R.id.deviceInfoText);
+        deviceInfo.setVisibility(View.GONE);
         deviceInfo.setFocusable(false);
         deviceInfo.setFocusableInTouchMode(false);
         deviceInfo.setClickable(false);
@@ -159,7 +183,9 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                 launchAllMap();
             }
         });
+        allMapButton.setVisibility(View.GONE);
         final Button heatmapButton = (Button) findViewById(R.id.heatButton);
+        heatmapButton.setVisibility(View.GONE);
         heatmapButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 launchHeatMap();
@@ -181,12 +207,6 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             }
         });
 
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference newDBRef = db.getReference();
-        //newDBRef.child("observations").child("123:456").child("1234").child("latitude").setValue(2);
-        //newDBRef.child("observations").child("111:111").child("111").child("latitude").setValue(5);
-        //newDBRef.child("observations").child("51584:65326").removeValue();
-        //newDBRef.child("observations").child("523:32629").removeValue();
 
         updateReceiver = new BroadcastReceiver() {
             @Override
@@ -292,7 +312,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                                            String permissions[],
                                            int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_REQUEST_COARSE_LOCATION: {
+            case 1: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 } else {
@@ -308,6 +328,30 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                     builder.show();
                 }
                 return;
+            }
+            case 2: {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Functionality limited");
+                builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                    }
+                });
+                builder.show();
+            }
+            case 3: {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Functionality limited");
+                builder.setMessage("Since Bluetooth access has not been granted, this app will not be able to discover beacons when in the background.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                    }
+                });
+                builder.show();
             }
         }
     }

@@ -95,7 +95,7 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
                 };
                 lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
 
-
+                //db.goOffline();
             }
         });
 
