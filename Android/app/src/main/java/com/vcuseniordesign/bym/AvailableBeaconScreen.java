@@ -15,6 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -59,6 +69,7 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
                 deviceListAdapter.add(b);
             }
         }
+        getSupportActionBar().setTitle("Click to claim beacon.");
 
         if(getIntent().getSerializableExtra("savedBeaconList")!=null){
         //savedBeacons = (ArrayList<Beacon>) getIntent().getSerializableExtra("savedBeaconList");
@@ -66,29 +77,69 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
         updateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent.getStringExtra("UpdateIntent")!=null) {
-                    Log.d("BaconUpdateReceiverABS","WE ARE UPDATING THE AVAILABLE BEACON LIST");
-                    deviceListAdapter.clear();
-                    ArrayList<Beacon> foundBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getFoundBeacons().clone();
-                    ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
-                    for (Beacon b : foundBeaconCopy) {
-                        final Beacon curB=b;
-                        if(!savedBeaconCopy.contains(curB)){
-                        beaconList.add(curB);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        deviceListAdapter.add(curB);
-                                        availableDeviceDebug.append("\n Adding");
+                final Intent intentReceived=intent;
 
-                                    } catch (SecurityException e) {
-                                    }
-                                }
-                            });
+                final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference newDBRef = db.getReference();
+
+                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                connectedRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        boolean connected = snapshot.getValue(Boolean.class);
+                        if (connected) {
+
+                        } else {
+                            db.goOnline();
                         }
                     }
-                }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        System.err.println("Listener was cancelled");
+                    }
+                });
+
+
+                Query lastQuery = newDBRef.child("claimedBeacons").orderByKey();
+
+
+                ValueEventListener getMostRecentValue = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(intentReceived.getStringExtra("UpdateIntent")!=null) {
+                            Log.d("BaconUpdateReceiverABS","WE ARE UPDATING THE AVAILABLE BEACON LIST");
+                            deviceListAdapter.clear();
+                            ArrayList<Beacon> foundBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getFoundBeacons().clone();
+                            ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+                            for (Beacon b : foundBeaconCopy) {
+
+
+                                final Beacon curB=b;
+                                if(!savedBeaconCopy.contains(curB)&&!dataSnapshot.hasChild(curB.getId2()+":"+curB.getId3())){
+                                    beaconList.add(curB);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            try {
+                                                deviceListAdapter.add(curB);
+                                                availableDeviceDebug.append("\n Adding");
+
+                                            } catch (SecurityException e) {
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                };
+                lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
+
+
+                db.goOffline();
             }
         };
         registerReceiver(updateReceiver,new IntentFilter("com.vcuseniordesign.bym"));
@@ -158,6 +209,33 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
 
     public void launchHomeDeviceList(Beacon beaconToAdd){
         ((BeaconApplication)getApplication()).getSavedBeacons().add(beaconToAdd);
+
+        final FirebaseDatabase db = FirebaseDatabase.getInstance();
+        final DatabaseReference newDBRef = db.getReference();
+
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                boolean connected = snapshot.getValue(Boolean.class);
+                if (connected) {
+
+                } else {
+                    db.goOnline();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+        });
+
+        newDBRef.child("claimedBeacons").child(beaconToAdd.getId2()+":"+beaconToAdd.getId3()).setValue("Claimed");
+
+        db.goOffline();
+
+
         Intent intent = new Intent(this, TagInfo.class);
         //intent.putExtra("savedBeaconList",savedBeacons);
         startActivity(intent);

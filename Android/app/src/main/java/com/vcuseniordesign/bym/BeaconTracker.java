@@ -2,6 +2,7 @@ package com.vcuseniordesign.bym;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -75,6 +76,15 @@ public class BeaconTracker extends Service implements BeaconConsumer {
             public void run() {
                 try {
                     while(isServiceStillRunning[0] || isServiceStillRunning[1] || isServiceStillRunning[2] || isServiceStillRunning[3]){
+
+                        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (mBluetoothAdapter == null) {
+                            break;
+                        } else {
+                            if (!mBluetoothAdapter.isEnabled()) {
+                                break;
+                            }
+                        }
                     //doStuff
 
                     ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
@@ -87,13 +97,42 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                     }
 
                     Log.d("UpdateThread","updateThreadisStillRunning"+isServiceStillRunning[0]+isServiceStillRunning[1]+isServiceStillRunning[2]+isServiceStillRunning[3]);
-                    FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
                     final DatabaseReference newDBRef = db.getReference();
 
-                    //db.goOnline();
+                        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                        connectedRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                boolean connected = snapshot.getValue(Boolean.class);
+                                if (connected) {
+
+                                } else {
+                                    db.goOnline();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+                                System.err.println("Listener was cancelled");
+                            }
+                        });
+
 
                     Long curTime = System.currentTimeMillis();
-                    Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
+                    /*Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
+
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null) {
+                                    Log.d("UpdateThreadHeatmap","Data could not be saved " + databaseError.getMessage());
+                                } else {
+                                    Log.d("UpdateThreadHeatmap","Data saved correctly");
+                                }
+                            }
+                        });*/
+
                     newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
                     newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
 
@@ -157,6 +196,18 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 ArrayList<Beacon> foundBeaconsCopy = (ArrayList<Beacon>)((BeaconApplication) getApplication()).getFoundBeacons().clone();
                 ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>)((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
                 if (beacons.size() > 0) {
+
+                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    if (mBluetoothAdapter == null) {
+                        Log.d("DeadService","Bluetooth is not available on this device. Shutting down service.");
+                        stopSelf();
+                    } else {
+                        if (!mBluetoothAdapter.isEnabled()) {
+                            Log.d("DeadService","Bluetooth is not turned on on this device. Shutting down service.");
+                            stopSelf();
+                        }
+                    }
+
                     for(Beacon b :beacons) {
                         Log.d("FoundBeacon","THE FOUND BEACON UUID IS : "+b.getId1());
                         if (!foundBeaconsCopy.contains(b)&&b.getId1().toString().equals("d0d3fa86-ca76-45ec-9bd9-6af4f6016926")){

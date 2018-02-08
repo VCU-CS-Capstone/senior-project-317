@@ -76,8 +76,27 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
         findBeaconbutton = (Button) findViewById(R.id.findBeaconButton);
         findBeaconbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                final FirebaseDatabase db = FirebaseDatabase.getInstance();
                 DatabaseReference newDBRef = db.getReference();
+
+                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                connectedRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        boolean connected = snapshot.getValue(Boolean.class);
+                        if (connected) {
+
+                        } else {
+                            db.goOnline();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        System.err.println("Listener was cancelled");
+                    }
+                });
+
                 Query lastQuery = newDBRef.child("observations").child(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString()).orderByKey().limitToLast(1);
 
 
@@ -95,7 +114,7 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
                 };
                 lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
 
-                //db.goOffline();
+                db.goOffline();
             }
         });
 
