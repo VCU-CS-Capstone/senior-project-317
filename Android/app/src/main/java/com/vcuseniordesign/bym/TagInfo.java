@@ -37,7 +37,7 @@ import java.util.Collection;
 import com.google.firebase.database.*;
 
 public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
-
+    TagInfo curScreen= this;
     TextView deviceInfo;
     ListView deviceList;
     private BeaconManager beaconManager;
@@ -200,10 +200,24 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         final Button clearButton = (Button) findViewById(R.id.clearSavedButton);
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                deleteBeaconFile();
-                deviceInfo.append("Saved Beacons Removed");
-                ((BeaconApplication)getApplication()).getSavedBeacons().clear();
-                deviceListAdapter.clear();
+
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(curScreen);
+                builder.setMessage("Are you sure you want to delete beacon(s)?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                deleteBeaconFile();
+                                deviceInfo.append("Saved Beacons Removed");
+                                ((BeaconApplication)getApplication()).getSavedBeacons().clear();
+                                deviceListAdapter.clear();
+                                deviceListAdapter.add(null);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                builder.create().show();
             }
         });
 
@@ -221,6 +235,58 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             }
         };
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if(intent.getSerializableExtra("beaconToUnpair")!=null){
+            BeaconFoundEvent beaconToUnpair = (BeaconFoundEvent) intent.getSerializableExtra("beaconToUnpair");
+            Beacon beaconObjToCheck=beaconToUnpair.getBeaconFound();
+            ArrayList<Beacon> savedBeaconsCopy = (ArrayList<Beacon>)((BeaconApplication)getApplication()).getSavedBeacons().clone();
+            for(Beacon b: savedBeaconsCopy){
+                if (b.equals(beaconObjToCheck)){
+                    savedBeaconsCopy.remove(b);
+                }
+            }
+            ((BeaconApplication)getApplication()).setSavedBeacons(savedBeaconsCopy);
+            ArrayList<BeaconFoundEvent> savedBFECopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
+            ArrayList<BeaconFoundEvent> savedBFECopyReturn = (ArrayList<BeaconFoundEvent>) savedBFECopy.clone();
+            Log.d("UnpairingTag","About to remove BFE of Tag");
+            int testCount=0;
+            Log.d("UnpairingTag","Number of BFEs to check "+savedBFECopy.size());
+            for(BeaconFoundEvent bfeTemp:savedBFECopy){
+                Log.d("UnpairingTag","Start of BFE Iteration: "+testCount+ " on: "+bfeTemp.getBeaconFound().getId2()+":"+bfeTemp.getBeaconFound().getId3());
+                if(bfeTemp.getBeaconFound().equals(beaconObjToCheck)){
+                    savedBFECopyReturn.remove(bfeTemp);
+                }
+                testCount++;
+            }
+            ((BeaconApplication)getApplication()).setFoundBeaconEvents(savedBFECopy);
+        }
+        deviceList = (ListView) findViewById(R.id.deviceInfoList);
+        deviceListAdapter = new homeBeaconButtonAdapter(this, android.R.layout.simple_list_item_1, beaconList);
+        if (((BeaconApplication)getApplication()).getSavedBeacons().size() == 0){ deviceListAdapter.add(null);
+        }else{
+            ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+            for(Beacon curBeacon:savedBeaconCopy){
+                beaconList.add(curBeacon);
+                deviceListAdapter.add(curBeacon);
+            }
+        }
+
+        deviceList.setAdapter(deviceListAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.d("BackButtonTest","We are minimizing the App");
+        Intent goHome = new Intent(Intent.ACTION_MAIN);
+        goHome.addCategory(Intent.CATEGORY_HOME);
+        goHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(goHome);
+        super.onBackPressed();
     }
 
     public void onStop(){

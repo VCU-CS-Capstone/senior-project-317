@@ -2,6 +2,7 @@ package com.vcuseniordesign.bym;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import org.altbeacon.beacon.Beacon;
 import java.util.ArrayList;
 
 public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCallback{
+    BeaconInfoScreen curScreen = this;
     BeaconFoundEvent currentBeaconEvent=new BeaconFoundEvent();
     TextView beaconName;
     TextView beaconIds;
@@ -69,8 +71,19 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
         unpairButton=(Button) findViewById(R.id.unpairButton);
         unpairButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                returnAndUnpair();
-
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(curScreen);
+                builder.setMessage("Are you sure you want to delete beacon(s)?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                returnAndUnpair();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                builder.create().show();
             }
         });
         findBeaconbutton = (Button) findViewById(R.id.findBeaconButton);

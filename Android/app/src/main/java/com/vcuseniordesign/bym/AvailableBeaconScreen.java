@@ -144,6 +144,13 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
         };
         registerReceiver(updateReceiver,new IntentFilter("com.vcuseniordesign.bym"));
     }
+
+    @Override
+    public void onBackPressed() {
+            launchHomeDeviceList();
+        super.onBackPressed();
+    }
+
     /*
     @Override
     public void onBeaconServiceConnect() {
@@ -208,6 +215,7 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
     }*/
 
     public void launchHomeDeviceList(Beacon beaconToAdd){
+
         ((BeaconApplication)getApplication()).getSavedBeacons().add(beaconToAdd);
 
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -231,13 +239,18 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
             }
         });
 
-        newDBRef.child("claimedBeacons").child(beaconToAdd.getId2()+":"+beaconToAdd.getId3()).setValue("Claimed");
+        newDBRef.child("claimedBeacons").child(beaconToAdd.getId2()+":"+beaconToAdd.getId3()).setValue("true");
 
         db.goOffline();
 
 
         Intent intent = new Intent(this, TagInfo.class);
         //intent.putExtra("savedBeaconList",savedBeacons);
+        startActivity(intent);
+    }
+
+    public void launchHomeDeviceList(){
+        Intent intent = new Intent(this, TagInfo.class);
         startActivity(intent);
     }
 }

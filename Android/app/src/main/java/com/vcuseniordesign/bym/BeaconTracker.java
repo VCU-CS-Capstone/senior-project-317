@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,7 +31,9 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.TimeZone;
 
 
 public class BeaconTracker extends Service implements BeaconConsumer {
@@ -45,10 +48,10 @@ public class BeaconTracker extends Service implements BeaconConsumer {
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
         beaconManager.getBeaconParsers().add(new BeaconParser("CorrectParse").setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        beaconManager.setForegroundScanPeriod(3100);
+        beaconManager.setForegroundScanPeriod(3000);
         beaconManager.setForegroundBetweenScanPeriod(1000);
-        beaconManager.setBackgroundScanPeriod(5100);
-        beaconManager.setBackgroundBetweenScanPeriod(2000);
+        beaconManager.setBackgroundScanPeriod(5000);
+        beaconManager.setBackgroundBetweenScanPeriod(30000);
         phoneLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         try{
             phoneLocationManager.requestLocationUpdates(phoneLocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
@@ -118,8 +121,19 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                             }
                         });
 
+                        Long curTime = System.currentTimeMillis();
 
-                    Long curTime = System.currentTimeMillis();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeZone(TimeZone.getTimeZone("EST"));
+                        calendar.setTimeInMillis(curTime);
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int hourValue= hour*calendar.get(Calendar.DAY_OF_YEAR);
+
+                        String curAndroid_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                        int userHash = curAndroid_id.hashCode();
+                        int uniqueIDperHour= userHash*hourValue;
+
+
                     /*Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
 
                         newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat, new DatabaseReference.CompletionListener() {
@@ -135,6 +149,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
 
                     newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
                     newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("hourID").setValue(Math.abs(uniqueIDperHour));
 
                     for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
 
