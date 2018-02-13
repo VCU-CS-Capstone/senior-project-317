@@ -1,12 +1,15 @@
+# These commands should be in root's crontable.
+# Run 'sudo su' and then 'crontab -e'
+
 # Edit this file to introduce tasks to be run by cron.
 # m h  dom mon dow   command
 
 # Daily security update
 0 0 * * * apt-get install openssh-server
 
-# Restart every 90 minutes
+# Restart every 90 minutes (This way, if anything goes wrong, we'll recover eventually)
 */90 * * * * shutdown -r 2 "Scheduled reboot, every 90min"
 
-# Run script on restart.
+# Run script on restart. 
 # Need to cd into directory first... not sure why, but it works!
 @reboot cd /home/pi && /usr/bin/python3 /home/pi/tagScanAndUpload.py
