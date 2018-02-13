@@ -5,6 +5,8 @@
 // Functions only run when event occurs on something in filepath matching pattern we provided above.
 // .onCreate only responds when an object is created; versus onWrite which runs on create/update/delete.
 
+/*
+
 const functions = require('firebase-functions');
 
 // This function limits the number of observation records retained per beacon.
@@ -54,3 +56,5 @@ exports.deleteOldHeatmapObservations = functions.database.ref('/heatmap/{timesta
 		return parentRef.update(updates);
 	});	
 });
+
+*/

@@ -6,3 +6,5 @@ The primary file to edit is ./functions/index.js
 
 How to write functions: https://firebase.google.com/docs/functions/database-events
 Instructions on how to actually deploy the functions: https://firebase.google.com/docs/functions/get-started
+
+** Right now, all functions are commented out since we want to retain data... just to see what happens.
