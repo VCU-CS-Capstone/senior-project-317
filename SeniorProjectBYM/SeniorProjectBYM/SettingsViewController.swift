@@ -25,7 +25,17 @@ class SettingsViewController: UIViewController {
     }
     
     @IBAction func signOut(_ sender: UIButton) {
+        print("SIGN OUT BUTTON")
+        
+        let firebaseAuth = Auth.auth()
+        do {
+            try firebaseAuth.signOut()
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
+        }
+        
         GIDSignIn.sharedInstance().signOut()
+        
         performSegue(withIdentifier: "signedOutSegue", sender: self)
     }
     
