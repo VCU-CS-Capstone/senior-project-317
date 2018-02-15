@@ -54,7 +54,13 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
     @TargetApi(23)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tag_info);/*
+        setContentView(R.layout.activity_tag_info);
+
+        //deleteBeaconFile();
+        //((BeaconApplication)getApplication()).getSavedBeacons().clear();
+        /*
+
+
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
         beaconManager.getBeaconParsers().add(new BeaconParser("CorrectParse").setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -286,7 +292,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         goHome.addCategory(Intent.CATEGORY_HOME);
         goHome.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(goHome);
-        super.onBackPressed();
+        //super.onBackPressed();
     }
 
     public void onStop(){
@@ -439,9 +445,19 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             String curBeaconInfo;
             for(Beacon curBeacon:savedBeaconList){
 
+                BeaconSaved currentBeaconInfo = null;
+                ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+                for(BeaconSaved curBeaconInfoToCheck:beaconInfoCopy){
+                    if(curBeaconInfoToCheck.getCurBeacon().equals(curBeacon)){
+                        currentBeaconInfo=curBeaconInfoToCheck;
+                    }
+                }
+
+
                 curBeaconInfo = curBeacon.getId1()+","
                         +curBeacon.getId2()+","
                         +curBeacon.getId3()+","
+                        +currentBeaconInfo.getBeaconName()+","
                         +"\n";
                 fileOutput.write(curBeaconInfo.getBytes());
             }

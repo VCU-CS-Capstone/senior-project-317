@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,16 +27,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.altbeacon.beacon.Beacon;
-
 import java.util.ArrayList;
+import java.util.Date;
 
 public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCallback{
     BeaconInfoScreen curScreen = this;
     BeaconFoundEvent currentBeaconEvent=new BeaconFoundEvent();
+    BeaconSaved currentBeaconInfo;
     TextView beaconName;
     TextView beaconIds;
-    TextView locationText;
+    TextView timeText;
     Button saveNicknameButton;
     Button unpairButton;
     Button findBeaconbutton;
@@ -52,20 +53,34 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
 
         if(getIntent().getSerializableExtra("beaconInfo")!=null){
             currentBeaconEvent=(BeaconFoundEvent)getIntent().getSerializableExtra("beaconInfo");
+            ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+            for(BeaconSaved curBeaconInfo:beaconInfoCopy){
+                if(curBeaconInfo.getCurBeacon().equals(currentBeaconEvent.getBeaconFound())){
+                    currentBeaconInfo=curBeaconInfo;
+                }
+            }
         }
+
+
+
         beaconName = (TextView) findViewById(R.id.beaconNickname);
         beaconIds = (TextView) findViewById(R.id.beaconIds);
-        locationText =(TextView) findViewById(R.id.locationText);
-        locationText.setText("Lat: "+currentBeaconEvent.getLastLat());
-        locationText.append("Long: "+currentBeaconEvent.getLastLong());
-        beaconName.setText(currentBeaconEvent.getBeaconNickname());
+        timeText =(TextView) findViewById(R.id.timeText);
+        Date dateFromTime = new Date(currentBeaconEvent.getLastTime());
+        timeText.setText(dateFromTime.toString());
+
+        //timeText.setText("Lat: "+currentBeaconEvent.getLastLat());
+        //timeText.append("Long: "+currentBeaconEvent.getLastLong());
+        beaconName.setText(currentBeaconInfo.getBeaconName());
         beaconIds.setText(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString());
         //beaconIds.append(currentBeaconEvent.getBeaconFound().getId3().toString());
         saveNicknameButton=(Button) findViewById(R.id.saveNicknameButton);
         saveNicknameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 currentBeaconEvent.setBeaconNickname(beaconName.getText().toString());
-
+                currentBeaconInfo.setBeaconName(beaconName.getText().toString());
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(curScreen.getCurrentFocus().getWindowToken(), 0);
             }
         });
         unpairButton=(Button) findViewById(R.id.unpairButton);
@@ -145,6 +160,12 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    public void onBackPressed() {
+        Intent intent = new Intent(this, TagInfo.class);
+        startActivity(intent);
+        //super.onBackPressed();
+    }
+
     public void onPause(){
         super.onPause();
         unregisterReceiver(updateReceiver);
@@ -166,8 +187,8 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
     public void updateMap(LatLng newLoc){
         curMarker.remove();
         curMarker=curMap.addMarker(new MarkerOptions().position(newLoc).title(currentBeaconEvent.getBeaconNickname()));
-        locationText.setText("Lat: "+newLoc.latitude);
-        locationText.append(" Long: "+newLoc.longitude);
+        //timeText.setText("Lat: "+newLoc.latitude);
+        //timeText.append(" Long: "+newLoc.longitude);
         curMap.moveCamera(CameraUpdateFactory.newLatLng(newLoc));
         curMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }

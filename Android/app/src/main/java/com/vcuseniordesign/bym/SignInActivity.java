@@ -43,7 +43,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
         ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
-
+        ((BeaconApplication)getApplication()).setSavedBeaconsInfo(getSavedBeaconInfoFromFile());
         signIn();
     }
 
@@ -63,6 +63,24 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         }catch(Exception e){}
         return acquiredSavedBeacons;
+    }
+
+    private ArrayList<BeaconSaved> getSavedBeaconInfoFromFile(){
+        ArrayList<BeaconSaved> acquiredSavedBeaconInfo = new ArrayList<BeaconSaved>();
+        try{
+            BufferedReader input = new BufferedReader(new InputStreamReader(
+                    openFileInput("myBeacons.txt")));
+            String curBeaconRow;
+            while((curBeaconRow = input.readLine())!=null){
+                String[] beaconIds;
+                beaconIds = curBeaconRow.split(",");
+                Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
+                acquiredSavedBeaconInfo.add(new BeaconSaved(beaconToAdd,beaconIds[3]));
+            }
+        }catch(FileNotFoundException fnf){
+
+        }catch(Exception e){}
+        return acquiredSavedBeaconInfo;
     }
 
     private ArrayList<BeaconFoundEvent> getFoundBeaconsFromFile(){

@@ -217,6 +217,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                         Log.d("DeadService","Bluetooth is not available on this device. Shutting down service.");
                         stopSelf();
                     } else {
+                        Log.d("DeadService","Bluetooth is on: "+mBluetoothAdapter.isEnabled());
                         if (!mBluetoothAdapter.isEnabled()) {
                             Log.d("DeadService","Bluetooth is not turned on on this device. Shutting down service.");
                             stopSelf();
