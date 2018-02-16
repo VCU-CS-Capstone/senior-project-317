@@ -8,9 +8,9 @@
 0 0 * * * apt-get install openssh-server
 
 # Restart every 90 minutes (This way, if anything goes wrong, we'll recover eventually)
-# We specify 20 or 40 so that we don't always restart on the hour.
-20 */3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
-40 1-23/3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
+# We specify 15 or 45 so that we don't always restart on the hour.
+15 0-21/3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
+45 1-23/3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
 
 # Run script on restart. 
 # Need to cd into directory first... not sure why, but it works!
