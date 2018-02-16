@@ -29,15 +29,7 @@ public class SettingsActivity extends AppCompatActivity implements
             case R.id.sign_out_button:
                 signOut();
                 break;
-            case R.id.go_back_button:
-                launchTagInfoActivity();
-                break;
         }
-    }
-
-    private void launchTagInfoActivity() {
-        Intent intent = new Intent(this, TagInfo.class);
-        startActivity(intent);
     }
 
     private void signOut() {
