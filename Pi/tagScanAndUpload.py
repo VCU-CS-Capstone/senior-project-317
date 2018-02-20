@@ -52,10 +52,17 @@ def initializeFirebase():
 
 # Writes timestamp + message + newLine.
 def writeToLogFile(message=""):
-	logFile = open(LOG_FILENAME, "a")
-	logFile.write(time.strftime(FORMAT_TIME_STRING) + "\t" + message + "\n")
-	logFile.close()
-
+	try:
+		logFile = open(LOG_FILENAME, "a")
+		logFile.write(time.strftime(FORMAT_TIME_STRING) + "\t" + message + "\n")
+		logFile.close()
+	except:
+		# Specifically, we're worried about if the log file gets too large.
+		# If there's an error, we overwrite entire file.
+		logFile = open(LOG_FILENAME, "w")
+		logFile.write(time.strftime(FORMAT_TIME_STRING) + "\tLOG ERROR. OVERWRITE LOG FILE. NEW LOG FILE.\n")
+		logFile.close()
+		
 # Launches a shell script to scan for bluetooth beacons in area.
 # Defaults to scanning for 10 seconds. Optionally pass parameter to set duration.
 # durationInSeconds is duration of scan, not of method. May be a couple seconds extra.
