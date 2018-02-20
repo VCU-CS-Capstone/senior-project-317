@@ -9,8 +9,9 @@
 
 # Restart every 90 minutes (This way, if anything goes wrong, we'll recover eventually)
 # We specify 15 or 45 so that we don't always restart on the hour.
-15 0-21/3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
-45 1-23/3 * * * shutdown -r 2 "Scheduled reboot, approx. every 90min"
+# Similarly to below, not sure why need to specify /sbin/, but, it works.
+15 0-21/3 * * * /sbin/shutdown -r 1 "Scheduled reboot"
+45 1-23/3 * * * /sbin/shutdown -r 1 "Scheduled reboot"
 
 # Run script on restart. 
 # Need to cd into directory first... not sure why, but it works!
