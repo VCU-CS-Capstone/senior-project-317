@@ -179,14 +179,26 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap){
         curMap=googleMap;
         LatLng lastKnownLoc= new LatLng(currentBeaconEvent.getLastLat(),currentBeaconEvent.getLastLong());
-        curMarker =googleMap.addMarker(new MarkerOptions().position(lastKnownLoc).title(currentBeaconEvent.getBeaconNickname()));
+
+        String titleText = currentBeaconEvent.getBeaconNickname();
+        if (titleText.equals("empty") || titleText.equals("") || titleText.equals(" ")) {
+            titleText = "Scanned by user";
+        }
+        curMarker =googleMap.addMarker(new MarkerOptions().position(lastKnownLoc).title(titleText));
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(lastKnownLoc));
         curMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }
 
     public void updateMap(LatLng newLoc){
         curMarker.remove();
-        curMarker=curMap.addMarker(new MarkerOptions().position(newLoc).title(currentBeaconEvent.getBeaconNickname()));
+
+        String titleText = currentBeaconEvent.getBeaconNickname();
+        if (titleText.equals("empty") || titleText.equals("") || titleText.equals(" ")) {
+            titleText = "Scanned by user";
+        }
+
+        curMarker=curMap.addMarker(new MarkerOptions().position(newLoc).title(titleText));
         //timeText.setText("Lat: "+newLoc.latitude);
         //timeText.append(" Long: "+newLoc.longitude);
         curMap.moveCamera(CameraUpdateFactory.newLatLng(newLoc));

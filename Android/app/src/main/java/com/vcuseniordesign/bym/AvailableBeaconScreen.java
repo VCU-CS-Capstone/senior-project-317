@@ -217,7 +217,7 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
     public void launchHomeDeviceList(Beacon beaconToAdd){
 
         ((BeaconApplication)getApplication()).getSavedBeacons().add(beaconToAdd);
-        BeaconSaved newBeacon = new BeaconSaved(beaconToAdd,"Beacon");
+        BeaconSaved newBeacon = new BeaconSaved(beaconToAdd,"New Beacon");
         ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
         beaconInfoCopy.add(newBeacon);
         ((BeaconApplication) getApplication()).setSavedBeaconsInfo(beaconInfoCopy);
