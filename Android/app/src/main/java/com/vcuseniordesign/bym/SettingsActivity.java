@@ -20,7 +20,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
         // Button listeners
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.go_back_button).setOnClickListener(this);
     }
 
     @Override

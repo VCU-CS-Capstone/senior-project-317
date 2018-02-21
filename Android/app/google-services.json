@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "25801171607",
+    "firebase_url": "https://seniorprojectbym.firebaseio.com",
+    "project_id": "seniorprojectbym",
+    "storage_bucket": "seniorprojectbym.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:25801171607:android:b32477ca04d5cdb4",
+        "android_client_info": {
+          "package_name": "com.vcuseniordesign.bym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "25801171607-k90c8bca2bl9rf1n7oa9aq4ofcqfrc8j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vcuseniordesign.bym",
+            "certificate_hash": "8555b29655aaeeb85e89fdce041757f456ee0b3d"
+          }
+        },
+        {
+          "client_id": "25801171607-dj81gr14rh1n3psr5eg064uchlh8pe64.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBX69yvlqR2XpOrteUST_MVU4Qiv6AoRgs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "25801171607-uc8ft6opv2g1gutfr93verie80kvtl80.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.BYM.SeniorProjectBYM"
+              }
+            },
+            {
+              "client_id": "25801171607-dj81gr14rh1n3psr5eg064uchlh8pe64.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
