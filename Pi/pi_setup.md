@@ -1,18 +1,22 @@
-To access the Pis: Either connect them to monitors and run `hostname -I` to get local IPs, or go through router-admin.
-
 # These tutorials are helpful:
-https://www.raspberrypi.org/documentation/raspbian/
+https://www.raspberrypi.org/learning/software-guide/quickstart/
 https://www.raspberrypi.org/documentation/configuration/
 
+
 # Initial Pi setup:
-1. You'll need to either connect to monitor and keyboard, or SSH in.
-2. Install Raspbian Lite / Jessie Lite, from an SD card.
+1. You'll probably need to connect with a monitor and keyboard.
+2. Install Raspbian Lite / Jessie Lite, from an SD card (which you formatted with 'Noobs' OS)
+		- Note: The library has SD card readers available.
+		- Default login for Raspbian: user pi, password raspberry 
 3. Run `sudo raspi-config`
-		- Set timezone
-		- Enabled SSH, disabled VNC
-4. Changed password
-5. Changed hostname
-6. Set sudo to require a password.
+		- Run 8, Update
+		- Run 1, Set password.
+		- Run 2, Network Options. Change hostname.
+		- Run 3, Boot Options. Change to boot into CLI require login. Choose to wait for network at boot.
+		- Run 4, Localization Options. Set timezone.
+		- Run 5, Interfacing Options. Enable ssh, Disable VNC.
+4. Run `hostname -I` to get local IP. Now, you can finish everything else via ssh.
+6. Set sudo to require a password. Run `sudo nano /etc/sudoers.d/010_pi-nopasswd` and edit to "pi ALL=(ALL) PASSWD: ALL"
 7. Run updates: `sudo apt-get update` , `sudo apt-get dist-upgrade`
 8. Add daily ssh security update to root's cron job. (See crontab file.) 
 9. See wpa_supplicant.conf for instructions on connecting to VCU wifi
