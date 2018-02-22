@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.altbeacon.beacon.Beacon;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -53,10 +55,20 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
 
         if(getIntent().getSerializableExtra("beaconInfo")!=null){
             currentBeaconEvent=(BeaconFoundEvent)getIntent().getSerializableExtra("beaconInfo");
+            Log.d("GettingBeaconSavedInfo","Finding: "+currentBeaconEvent.getBeaconFound().getId2()+":"+currentBeaconEvent.getBeaconFound().getId3());
+
             ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+
+            for(BeaconSaved curBeaconSaved: beaconInfoCopy){
+                Log.d("GettingBeaconSavedInfo",curBeaconSaved.getBeaconName()+" ID: "+curBeaconSaved.getCurBeacon().getId2()+":"+curBeaconSaved.getCurBeacon().getId3());
+            }
+
             for(BeaconSaved curBeaconInfo:beaconInfoCopy){
-                if(curBeaconInfo.getCurBeacon().equals(currentBeaconEvent.getBeaconFound())){
+                Log.d("GettingBeaconSavedInfo",((curBeaconInfo.getCurBeacon().getId2()+":"+currentBeaconEvent.getBeaconFound().getId2())));
+                Log.d("GettingBeaconSavedInfo",((curBeaconInfo.getCurBeacon().getId3()+":"+currentBeaconEvent.getBeaconFound().getId3())));
+                if((curBeaconInfo.getCurBeacon().getId2().equals(currentBeaconEvent.getBeaconFound().getId2()))&&(curBeaconInfo.getCurBeacon().getId3().equals(currentBeaconEvent.getBeaconFound().getId3()))){
                     currentBeaconInfo=curBeaconInfo;
+                    Log.d("GettingBeaconSavedInfo","We got the right BeaconSaved");
                 }
             }
         }
@@ -90,6 +102,31 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
                 builder.setMessage("Are you sure you want to delete beacon(s)?")
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+
+                                final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                                final DatabaseReference newDBRef = db.getReference();
+
+                                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                                connectedRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        boolean connected = snapshot.getValue(Boolean.class);
+                                        if (connected) {
+
+                                        } else {
+                                            db.goOnline();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        System.err.println("Listener was cancelled");
+                                    }
+                                });
+
+                                newDBRef.child("claimedBeacons").child(currentBeaconEvent.getBeaconFound().getId2()+":"+currentBeaconEvent.getBeaconFound().getId3()).removeValue();
+                                db.goOffline();
+
                                 returnAndUnpair();
                             }
                         })
@@ -207,6 +244,14 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
 
 
     public void returnAndUnpair(){
+        ArrayList<BeaconSaved> savedBeaconInfoCopy = (ArrayList<BeaconSaved>) ((BeaconApplication)getApplication()).getSavedBeaconsInfo().clone();
+        ArrayList<BeaconSaved> savedBeaconInfoCopyEdit = (ArrayList<BeaconSaved>) ((BeaconApplication)getApplication()).getSavedBeaconsInfo().clone();
+        for(BeaconSaved curBeaconSaved:savedBeaconInfoCopy){
+            if(curBeaconSaved==currentBeaconInfo){
+                savedBeaconInfoCopyEdit.remove(curBeaconSaved);
+            }
+        }
+        ((BeaconApplication)getApplication()).setSavedBeaconsInfo(savedBeaconInfoCopyEdit);
         Intent intent = new Intent(this, TagInfo.class);
         intent.putExtra("beaconToUnpair",currentBeaconEvent);
         startActivity(intent);

@@ -221,6 +221,9 @@ public class AvailableBeaconScreen extends AppCompatActivity /*implements Beacon
         ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
         beaconInfoCopy.add(newBeacon);
         ((BeaconApplication) getApplication()).setSavedBeaconsInfo(beaconInfoCopy);
+        for(BeaconSaved curBeaconSaved: beaconInfoCopy){
+            Log.d("AddingBeaconSaved",curBeaconSaved.getBeaconName());
+        }
 
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
         final DatabaseReference newDBRef = db.getReference();

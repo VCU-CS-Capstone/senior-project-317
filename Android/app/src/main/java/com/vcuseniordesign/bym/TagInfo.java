@@ -3,6 +3,7 @@ package com.vcuseniordesign.bym;
 import android.Manifest;
 import android.annotation.TargetApi;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -98,7 +100,74 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         }*/
 
 
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(curScreen);
+                builder.setMessage("Please turn on Bluetooth")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                                startActivityForResult(enableBtIntent, 1);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                android.app.AlertDialog.Builder NotEnabledBuilder = new android.app.AlertDialog.Builder(curScreen);
+                                NotEnabledBuilder.setMessage("Bluetooth not enabled. App will not function. Please restart with bluetooth enabled.")
+                                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                            }
+                                        });
+                                NotEnabledBuilder.create().show();
+                            }
+                        });
+                builder.create().show();
+            }
+        }
 
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled && !network_enabled) {
+            // notify user
+            AlertDialog.Builder dialog = new AlertDialog.Builder(curScreen);
+            dialog.setMessage("Please turn on location services.");
+            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent enableLocationIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivityForResult(enableLocationIntent, 1);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    android.app.AlertDialog.Builder NotEnabledBuilder = new android.app.AlertDialog.Builder(curScreen);
+                    NotEnabledBuilder.setMessage("Location Services not enabled. App will not function. Please restart with Location Services enabled.")
+                            .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            });
+                    NotEnabledBuilder.create().show();
+                }
+            });
+            dialog.show();
+        }
+
+        /*
         //Permissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check 
@@ -140,6 +209,8 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             }
         }
         //end Perms
+        */
+
         /*
         for(Beacon curBeacon: savedBeacons){
             foundBeaconList.add(new BeaconFoundEvent(curBeacon,curLat,curLong,System.currentTimeMillis()));
@@ -148,12 +219,14 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         if(getIntent().getSerializableExtra("beaconToUnpair")!=null){
             BeaconFoundEvent beaconToUnpair = (BeaconFoundEvent) getIntent().getSerializableExtra("beaconToUnpair");
             Beacon beaconObjToCheck=beaconToUnpair.getBeaconFound();
-            for(Beacon b: ((BeaconApplication)getApplication()).getSavedBeacons()){
+            ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+            for(Beacon b: savedBeaconCopy){
                 if (b.equals(beaconObjToCheck)){
                     ((BeaconApplication)getApplication()).getSavedBeacons().remove(b);
                 }
             }
-            for(BeaconFoundEvent bfe:((BeaconApplication)getApplication()).getFoundBeaconEvents()){
+            ArrayList<BeaconFoundEvent> savedBFECopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication)getApplication()).getFoundBeaconEvents().clone();
+            for(BeaconFoundEvent bfe:savedBFECopy){
                 if(bfe.getBeaconFound().equals(beaconObjToCheck)){
                     ((BeaconApplication)getApplication()).getFoundBeaconEvents().remove(bfe);
                 }
@@ -169,6 +242,8 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                 deviceListAdapter.add(curBeacon);
             }
         }
+
+
 
         deviceList.setAdapter(deviceListAdapter);
         deviceInfo = (TextView) findViewById(R.id.deviceInfoText);
@@ -213,9 +288,38 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
                             public void onClick(DialogInterface dialog, int id) {
                                 deleteBeaconFile();
                                 deviceInfo.append("Saved Beacons Removed");
+
+                                final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                                final DatabaseReference newDBRef = db.getReference();
+
+                                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                                connectedRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        boolean connected = snapshot.getValue(Boolean.class);
+                                        if (connected) {
+
+                                        } else {
+                                            db.goOnline();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        System.err.println("Listener was cancelled");
+                                    }
+                                });
+
+                                ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+                                for(Beacon curBeacon:savedBeaconCopy){
+                                        newDBRef.child("claimedBeacons").child(curBeacon.getId2()+":"+curBeacon.getId3()).removeValue();
+                                }
+
                                 ((BeaconApplication)getApplication()).getSavedBeacons().clear();
+                                ((BeaconApplication)getApplication()).getSavedBeaconsInfo().clear();
                                 deviceListAdapter.clear();
                                 deviceListAdapter.add(null);
+                                db.goOffline();
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SeniorDesign</string>
+    <string name="app_name">SeniorDesignBYM</string>
 
     <string name="signed_in">Signed in. Loading...</string>
     <string name="not_signed_in">Not signed in</string>

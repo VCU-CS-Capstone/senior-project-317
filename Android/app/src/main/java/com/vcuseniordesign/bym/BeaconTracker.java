@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
@@ -131,7 +132,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
 
                         String curAndroid_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                         int userHash = curAndroid_id.hashCode();
-                        int uniqueIDperHour= userHash*hourValue;
+                        final int uniqueIDperHour= userHash*hourValue;
 
 
                     /*Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
@@ -146,11 +147,11 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                                 }
                             }
                         });*/
-
-                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
-                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
-                    newDBRef.child("heatmap").child(Long.toString(curTime)).child("hourID").setValue(Math.abs(uniqueIDperHour));
-
+                    if(curLat!=0||curLat!=0) {
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("hourID").setValue(Math.abs(uniqueIDperHour));
+                    }
                     for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
 
 
@@ -162,12 +163,17 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                                 @Override
                                 public void onDataChange(DataSnapshot dbSnapShot) {
                                     if (!dbSnapShot.hasChild(Long.toString(bfeToUse.getLastTime()))) {
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("longitude").setValue(bfeToUse.getLastLong());
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue(bfeToUse.getBeaconNickname());
+                                        if(curLat!=0||curLat!=0) {
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("longitude").setValue(bfeToUse.getLastLong());
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue("No additional Info");
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("hourID").setValue(Math.abs(uniqueIDperHour));
+
+                                        }
                                     }
                                 }
 
