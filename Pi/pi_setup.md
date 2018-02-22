@@ -2,6 +2,8 @@
 https://www.raspberrypi.org/learning/software-guide/quickstart/
 https://www.raspberrypi.org/documentation/configuration/
 
+# Easiest method:
+Image the SD card of an already setup Pi onto a new SD card for the new Pi.
 
 # Initial Pi setup:
 1. You'll probably need to connect with a monitor and keyboard.
