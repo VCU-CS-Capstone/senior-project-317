@@ -93,6 +93,7 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
                 currentBeaconInfo.setBeaconName(beaconName.getText().toString());
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(curScreen.getCurrentFocus().getWindowToken(), 0);
+                onBackPressed();
             }
         });
         unpairButton=(Button) findViewById(R.id.unpairButton);
@@ -188,7 +189,45 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
             public void onReceive(Context context, Intent intent) {
                 if(intent.getStringExtra("UpdateIntent")!=null) {
                     Log.d("BaconUpdateReceiverBIS","WE ARE UPDATING THE MORE INFO SCREEN");
+                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    DatabaseReference newDBRef = db.getReference();
 
+                    DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                    connectedRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            boolean connected = snapshot.getValue(Boolean.class);
+                            if (connected) {
+
+                            } else {
+                                db.goOnline();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            System.err.println("Listener was cancelled");
+                        }
+                    });
+
+                    Query lastQuery = newDBRef.child("observations").child(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString()).orderByKey().limitToLast(1);
+
+
+                    ValueEventListener getMostRecentValue = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot mostRecentEvent:dataSnapshot.getChildren()) {
+                                Double newLat = (Double) mostRecentEvent.child("latitude").getValue();
+                                Double newLong = (Double) mostRecentEvent.child("longitude").getValue();
+                                updateMap(new LatLng(newLat, newLong));
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {}
+                    };
+                    lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
+
+                    db.goOffline();
                 }
             }
         };

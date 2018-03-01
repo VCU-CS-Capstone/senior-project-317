@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
@@ -36,12 +37,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.*;
 
 public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
     TagInfo curScreen= this;
     TextView deviceInfo;
     ListView deviceList;
+    ProgressBar loadingCircle;
     private BeaconManager beaconManager;
     private ArrayList<Beacon> beaconList = new ArrayList<Beacon>();
     //private ArrayList<Beacon> savedBeacons = new ArrayList<Beacon>();
@@ -252,6 +255,8 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         deviceInfo.setFocusableInTouchMode(false);
         deviceInfo.setClickable(false);
 
+        loadingCircle = (ProgressBar)findViewById(R.id.LoadingCircle);
+
         final Button addButton = (Button) findViewById(R.id.addNewDeviceButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -401,8 +406,10 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
     public void onStop(){
         super.onStop();
-        storeSavedBeaconsInFile(((BeaconApplication)getApplication()).getSavedBeacons());
-        storeFoundBeaconsInFile(((BeaconApplication)getApplication()).getFoundBeaconEvents());
+        ((BeaconApplication)getApplication()).storeSavedBeaconsInFile();
+        //storeSavedBeaconsInFile(((BeaconApplication)getApplication()).getSavedBeacons());
+        ((BeaconApplication)getApplication()).storeFoundBeaconsInFile();
+        //storeFoundBeaconsInFile(((BeaconApplication)getApplication()).getFoundBeaconEvents());
         //Intent stopBeaconService = new Intent(this, BeaconTracker.class);
         //stopService(stopBeaconService);
     }
@@ -543,6 +550,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         }catch(Exception e){}
     }
 
+    /*
     private void storeSavedBeaconsInFile(ArrayList<Beacon> savedBeaconList){
         try{
             FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
@@ -568,8 +576,9 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             fileOutput.close();
         }catch(SecurityException se){}
         catch (Exception e){}
-    }
+    }*/
 
+    /*
     private void storeFoundBeaconsInFile(ArrayList<BeaconFoundEvent> savedBFEList){
         try{
             FileOutputStream fileOutput = this.openFileOutput("myBFE.txt", Context.MODE_PRIVATE);
@@ -588,7 +597,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
             fileOutput.close();
         }catch(SecurityException se){}
         catch (Exception e){}
-    }
+    }*/
 
     private ArrayList<Beacon> getSavedBeaconsFromFile(){
         ArrayList<Beacon> acquiredSavedBeacons = new ArrayList<Beacon>();
@@ -619,19 +628,68 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
     }
 
     public void launchMoreBeaconInfo(Beacon b){
-        Log.d("LaunchingMoreBeacon","Current beacon is "+b.getId1()+" : "+b.getId2()+" : "+b.getId3());
-        BeaconFoundEvent eventToExplore= new BeaconFoundEvent();
+        Log.d("LaunchingMoreBeacon","Current beacon is "+b.getId2()+":"+b.getId3());
+        BeaconFoundEvent eventToExplore= null;
         ArrayList<BeaconFoundEvent> curBeaconList = (ArrayList<BeaconFoundEvent>)((BeaconApplication)getApplication()).getFoundBeaconEvents().clone();
         for(BeaconFoundEvent curEvent:curBeaconList){
-            Log.d("LaunchingMoreBeacon","Current beacon is "+b.getId1()+" : "+b.getId2()+" : "+b.getId3());
-            Log.d("LaunchingMoreBeacon","Beacon to find is "+curEvent.getBeaconFound().getId1()+" : "+curEvent.getBeaconFound().getId2()+" : "+curEvent.getBeaconFound().getId3());
+            Log.d("LaunchingMoreBeacon","Beacon to find is "+curEvent.getBeaconFound().getId2()+":"+curEvent.getBeaconFound().getId3());
             if(b.equals(curEvent.getBeaconFound())){
                 eventToExplore=curEvent;
             }
         }
-        Intent intent = new Intent(this, BeaconInfoScreen.class);
-        intent.putExtra("beaconInfo",eventToExplore);
-        startActivity(intent);
+        if(eventToExplore==null){
+            final FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference newDBRef = db.getReference();
+
+            DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+            connectedRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    boolean connected = snapshot.getValue(Boolean.class);
+                    if (connected) {
+
+                    } else {
+                        db.goOnline();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    System.err.println("Listener was cancelled");
+                }
+            });
+
+            Query lastQuery = newDBRef.child("observations").child(b.getId2().toString()+":"+b.getId3().toString()).orderByKey().limitToLast(1);
+
+
+            ValueEventListener getMostRecentValue = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot mostRecentEvent:dataSnapshot.getChildren()) {
+                        double newLat = (double) (mostRecentEvent.child("latitude").getValue());
+                        double newLong = (double) (mostRecentEvent.child("longitude").getValue());
+                        long curTime = Long.parseLong(mostRecentEvent.getKey());
+                        String combinedIds=mostRecentEvent.getRef().getParent().getKey();
+                        String[] splitIds=combinedIds.split(":");
+                        Beacon beaconToAdd=new Beacon.Builder().setId1("d0d3fa86-ca76-45ec-9bd9-6af4f6016926").setId2(splitIds[0]).setId3(splitIds[1]).build();
+                        BeaconFoundEvent eventToExplore=new BeaconFoundEvent(beaconToAdd,newLat,newLong,curTime);
+                        launchMoreInfoFromDB(eventToExplore);
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
+            loadingCircle.setVisibility(View.VISIBLE);
+            db.goOffline();
+
+        }else {
+
+
+            Intent intent = new Intent(this, BeaconInfoScreen.class);
+            intent.putExtra("beaconInfo", eventToExplore);
+            startActivity(intent);
+        }
     }
 
     private void launchAllMap(){
@@ -640,6 +698,13 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
     }
     private void launchHeatMap(){
         Intent intent = new Intent(this,heatMapActivity.class);
+        startActivity(intent);
+    }
+
+    public void launchMoreInfoFromDB(BeaconFoundEvent beaconInfoToExplore){
+        loadingCircle.setVisibility(View.INVISIBLE);
+        Intent intent = new Intent(this, BeaconInfoScreen.class);
+        intent.putExtra("beaconInfo",beaconInfoToExplore);
         startActivity(intent);
     }
 

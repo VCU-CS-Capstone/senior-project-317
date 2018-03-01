@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -44,6 +45,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
         ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
         ((BeaconApplication)getApplication()).setSavedBeaconsInfo(getSavedBeaconInfoFromFile());
+
+        ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>)((BeaconApplication) getApplication()).getSavedBeacons().clone();
+        ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+        for(BeaconSaved curBeaconSaved: beaconInfoCopy){
+            Log.d("LoadBeacons","Current BeaconSaved is: "+curBeaconSaved.getCurBeacon().getId2()+":"+curBeaconSaved.getCurBeacon().getId3());
+        }
+        for(Beacon curBeacon: savedBeaconCopy){
+            Log.d("LoadBeacons","Current Beacon is: "+curBeacon.getId2()+":"+curBeacon.getId3());
+        }
+
         signIn();
     }
 
