@@ -153,16 +153,16 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                         newDBRef.child("heatmap").child(Long.toString(curTime)).child("hourID").setValue(Math.abs(uniqueIDperHour));
                     }
                     for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
-
-
                         final BeaconFoundEvent bfeToUse=bfe;
                         try {
 
+                            /*
                             newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString() + ":" + bfe.getBeaconFound().getId3().toString())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dbSnapShot) {
                                     if (!dbSnapShot.hasChild(Long.toString(bfeToUse.getLastTime()))) {
+                                    */
                                         if(curLat!=0||curLat!=0) {
                                             newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
@@ -172,19 +172,18 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue("No additional Info");
                                             newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("hourID").setValue(Math.abs(uniqueIDperHour));
-
                                         }
-                                    }
+                                   /* }
                                 }
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {}
                             });
-
+                            */
 
                         }catch (Exception e){}
                     }
-                    //((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
+                    ((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
                     Log.d("UpdateThread","We got this far");
 
                     db.goOffline();
