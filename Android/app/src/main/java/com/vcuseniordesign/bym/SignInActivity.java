@@ -1,7 +1,10 @@
 package com.vcuseniordesign.bym;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -23,6 +26,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.Manifest;
 
 /**
  *  Sign-in implemented using this tutorial: https://firebase.google.com/docs/auth/android/firebaseui
@@ -41,6 +45,19 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    1);
+        }
 
         ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
         ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
