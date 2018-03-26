@@ -173,6 +173,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                                             newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("hourID").setValue(Math.abs(uniqueIDperHour));
                                         }
+                                        Log.d("UpdateThread","The observation was uploaded.");
                                    /* }
                                 }
 
@@ -183,8 +184,9 @@ public class BeaconTracker extends Service implements BeaconConsumer {
 
                         }catch (Exception e){}
                     }
-                    ((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
-                    Log.d("UpdateThread","We got this far");
+                    (((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
+                    (((BeaconApplication) getApplication()).getFoundBeacons()).clear();
+                    Log.d("UpdateThread","We just cleared the FoundBeaconEvents");
 
                     db.goOffline();
 
@@ -251,6 +253,9 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 BeaconApplication curApp=((BeaconApplication)getApplication());
                 curApp.setFoundBeacons(foundBeaconsCopy);
                 curApp.setFoundBeaconEvents(foundBeaconEventCopy);
+                Log.d("BaconUpdatingService","We just set the foundBeaconEvents, SIZE: "+foundBeaconEventCopy.size());
+
+
 
                 Intent updateListIntent = new Intent();
                 updateListIntent.setAction("com.vcuseniordesign.bym");
