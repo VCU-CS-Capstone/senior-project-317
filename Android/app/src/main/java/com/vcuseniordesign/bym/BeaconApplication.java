@@ -33,6 +33,7 @@ public class BeaconApplication extends Application {
 
     public void storeSavedBeaconsInFile(){
         try{
+            Log.d("WriteFile",getFilesDir().getAbsolutePath());
             FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
             String curBeaconInfo;
 
@@ -58,14 +59,16 @@ public class BeaconApplication extends Application {
                 fileOutput.write(curBeaconInfo.getBytes());
             }
             fileOutput.close();
+            Log.d("WriteFile","We finished writing SavedBeacons to the file");
         }catch(SecurityException se){}
         catch (Exception e){}
     }
 
     public void storeFoundBeaconsInFile(){
         try{
-
+            Log.d("WriteFile",getFilesDir().getAbsolutePath());
             FileOutputStream fileOutput = this.openFileOutput("myBFE.txt", Context.MODE_PRIVATE);
+
             String curBeaconInfo;
             ArrayList<BeaconFoundEvent> savedBFEListCopy=(ArrayList<BeaconFoundEvent>)foundBeaconEvents.clone();
 
@@ -81,6 +84,7 @@ public class BeaconApplication extends Application {
                 fileOutput.write(curBeaconInfo.getBytes());
             }
             fileOutput.close();
+            Log.d("WriteFile","We finished writing FoundBeacons to the file");
         }catch(SecurityException se){}
         catch (Exception e){}
     }

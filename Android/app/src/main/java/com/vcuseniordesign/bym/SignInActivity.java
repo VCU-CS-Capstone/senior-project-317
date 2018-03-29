@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 import org.altbeacon.beacon.Beacon;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -58,7 +59,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     1);
         }
-
+        for(String appFile:fileList()) {
+            File tempFile = new File(getFilesDir().getAbsoluteFile()+"/"+appFile);
+            Log.d("LoadBeacons",appFile+ " Exists: "+tempFile.exists());
+            Log.d("LoadBeacons",appFile+" is this long: "+Long.toString(tempFile.length()));
+            Log.d("LoadBeacons","Can read: "+tempFile.canRead()+" Can write: "+tempFile.canWrite() );
+        }
         ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
         ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
         ((BeaconApplication)getApplication()).setSavedBeaconsInfo(getSavedBeaconInfoFromFile());
@@ -78,15 +84,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<Beacon> getSavedBeaconsFromFile(){
         ArrayList<Beacon> acquiredSavedBeacons = new ArrayList<Beacon>();
         try{
+            Log.d("LoadBeacons","We are about to load savedBeacons");
             BufferedReader input = new BufferedReader(new InputStreamReader(
                     openFileInput("myBeacons.txt")));
             String curBeaconRow;
             while((curBeaconRow = input.readLine())!=null){
+                Log.d("LoadBeacons",curBeaconRow+" is the current line (savedBeacons) \n");
                 String[] beaconIds;
                 beaconIds = curBeaconRow.split(",");
                 Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
                 acquiredSavedBeacons.add(beaconToAdd);
             }
+            Log.d("LoadBeacons","We have loaded the savedBeacons");
         }catch(FileNotFoundException fnf){
 
         }catch(Exception e){}
@@ -96,15 +105,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private ArrayList<BeaconSaved> getSavedBeaconInfoFromFile(){
         ArrayList<BeaconSaved> acquiredSavedBeaconInfo = new ArrayList<BeaconSaved>();
         try{
+            Log.d("LoadBeacons","We are about to load savedBeaconsInfo");
             BufferedReader input = new BufferedReader(new InputStreamReader(
                     openFileInput("myBeacons.txt")));
             String curBeaconRow;
             while((curBeaconRow = input.readLine())!=null){
+                Log.d("LoadBeacons",curBeaconRow+" is the current line (savedBeaconsInfo) \n");
                 String[] beaconIds;
                 beaconIds = curBeaconRow.split(",");
                 Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
                 acquiredSavedBeaconInfo.add(new BeaconSaved(beaconToAdd,beaconIds[3]));
             }
+            Log.d("LoadBeacons","We have loaded the savedBeaconsInfo");
         }catch(FileNotFoundException fnf){
 
         }catch(Exception e){}

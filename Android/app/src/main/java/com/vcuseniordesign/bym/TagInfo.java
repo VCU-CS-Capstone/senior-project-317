@@ -406,7 +406,7 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
 
     public void onStop(){
         super.onStop();
-        ((BeaconApplication)getApplication()).storeSavedBeaconsInFile();
+        //((BeaconApplication)getApplication()).storeSavedBeaconsInFile();
         //storeSavedBeaconsInFile(((BeaconApplication)getApplication()).getSavedBeacons());
         ((BeaconApplication)getApplication()).storeFoundBeaconsInFile();
         //storeFoundBeaconsInFile(((BeaconApplication)getApplication()).getFoundBeaconEvents());
