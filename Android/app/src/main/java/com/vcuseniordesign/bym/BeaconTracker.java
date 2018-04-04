@@ -92,7 +92,16 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                     //doStuff
 
                     ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
-                    //BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
+                    ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication) getApplication()).getSavedBeacons().clone();
+                    for(Beacon tempSaved:savedBeaconCopy){
+                        Log.d("UpdateThreadBeaconSize","UUID: " +tempSaved.getId1()+"\n Major: "+tempSaved.getId2()+"\n Minor: "+tempSaved.getId3());
+                    }
+                        ArrayList<BeaconSaved> savedBeaconInfoCopy = (ArrayList<BeaconSaved>) ((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+                        for(BeaconSaved tempSaved:savedBeaconInfoCopy){
+                            Log.d("UpdateThreadBeaconSize","UUID: " +tempSaved.getCurBeacon().getId1()+"\n Major: "+tempSaved.getCurBeacon().getId2()+"\n Minor: "+tempSaved.getCurBeacon().getId3()+"\n"+"Name: "+ tempSaved.getBeaconName());
+                        }
+
+                        //BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
                     //foundBeaconEventCopy.add(locationBeacon);
 
                     Log.d("UpdateThreadBeaconSize","foundBeaconEventSize = " + foundBeaconEventCopy.size());
