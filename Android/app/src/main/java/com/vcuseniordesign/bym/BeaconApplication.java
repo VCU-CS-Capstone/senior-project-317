@@ -1,11 +1,13 @@
 package com.vcuseniordesign.bym;
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 import android.app.Application;
 import android.content.Intent;
 
 import org.altbeacon.beacon.Beacon;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -33,8 +35,23 @@ public class BeaconApplication extends Application {
 
     public void storeSavedBeaconsInFile(){
         try{
-            Log.d("WriteFile",getFilesDir().getAbsolutePath());
-            FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
+            Log.d("WriteFile",Environment.getRootDirectory().getAbsolutePath()+"/"+"SeniorDesignBYM");
+
+            File dir = new File(Environment.getRootDirectory().getPath()+"/"+"SeniorDesignBYM");
+            try{
+                if(dir.mkdir()) {
+                    Log.d("WriteFile","Directory Created");
+                } else {
+                    Log.d("WriteFile","Directory not created");
+                }
+            }catch(Exception e){
+                Log.d("WriteFile",e.getMessage());
+            }
+
+            final File newDir = new File(Environment.getRootDirectory().getPath()+"/"+"SeniorDesignBYM"+"/"+"myBeaconTest.txt");
+            //Log.d("WriteFile",getFilesDir().getAbsolutePath());
+            FileOutputStream fileOutput = new FileOutputStream(newDir);
+            //FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
             String curBeaconInfo;
 
             ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) savedBeacons.clone();
@@ -60,14 +77,16 @@ public class BeaconApplication extends Application {
             }
             fileOutput.close();
             Log.d("WriteFile","We finished writing SavedBeacons to the file");
-        }catch(SecurityException se){}
-        catch (Exception e){}
+        }catch(SecurityException se){Log.d("WriteFile","There was a security failure writing saved Beacons");}
+        catch (Exception e){Log.d("WriteFile","There was a failure writing saved Beacons: \n"+e.getMessage());}
     }
 
     public void storeFoundBeaconsInFile(){
         try{
-            Log.d("WriteFile",getFilesDir().getAbsolutePath());
-            FileOutputStream fileOutput = this.openFileOutput("myBFE.txt", Context.MODE_PRIVATE);
+            Log.d("WriteFile",Environment.getDataDirectory().getPath());
+            final File newDir = new File(Environment.getRootDirectory().getPath()+"/"+"myBFE.txt");
+            //Log.d("WriteFile",getFilesDir().getAbsolutePath());
+            FileOutputStream fileOutput = new FileOutputStream(newDir);
 
             String curBeaconInfo;
             ArrayList<BeaconFoundEvent> savedBFEListCopy=(ArrayList<BeaconFoundEvent>)foundBeaconEvents.clone();

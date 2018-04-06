@@ -79,6 +79,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
             @Override
             public void run() {
                 try {
+
                     while(isServiceStillRunning[0] || isServiceStillRunning[1] || isServiceStillRunning[2] || isServiceStillRunning[3]){
 
                         BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -93,12 +94,14 @@ public class BeaconTracker extends Service implements BeaconConsumer {
 
                     ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
                     ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication) getApplication()).getSavedBeacons().clone();
+                    Log.d("UTSavedBeaconSize","Saved beacon size is: "+savedBeaconCopy.size());
                     for(Beacon tempSaved:savedBeaconCopy){
-                        Log.d("UpdateThreadBeaconSize","UUID: " +tempSaved.getId1()+"\n Major: "+tempSaved.getId2()+"\n Minor: "+tempSaved.getId3());
+                        Log.d("UTSavedBeaconSize","UUID: " +tempSaved.getId1()+"\n Major: "+tempSaved.getId2()+"\n Minor: "+tempSaved.getId3());
                     }
                         ArrayList<BeaconSaved> savedBeaconInfoCopy = (ArrayList<BeaconSaved>) ((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+                        Log.d("UTSavedBeaconInfoSize","Saved beaconInfo size is: "+savedBeaconInfoCopy.size());
                         for(BeaconSaved tempSaved:savedBeaconInfoCopy){
-                            Log.d("UpdateThreadBeaconSize","UUID: " +tempSaved.getCurBeacon().getId1()+"\n Major: "+tempSaved.getCurBeacon().getId2()+"\n Minor: "+tempSaved.getCurBeacon().getId3()+"\n"+"Name: "+ tempSaved.getBeaconName());
+                            Log.d("UTSavedBeaconInfoSize","UUID: " +tempSaved.getCurBeacon().getId1()+"\n Major: "+tempSaved.getCurBeacon().getId2()+"\n Minor: "+tempSaved.getCurBeacon().getId3()+"\n"+"Name: "+ tempSaved.getBeaconName());
                         }
 
                         //BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
@@ -144,18 +147,6 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                         final int uniqueIDperHour= userHash*hourValue;
 
 
-                    /*Log.d("UpdateThreadHeatmap","CurrentTime: "+curTime+" about to updateHeatmap");
-
-                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Log.d("UpdateThreadHeatmap","Data could not be saved " + databaseError.getMessage());
-                                } else {
-                                    Log.d("UpdateThreadHeatmap","Data saved correctly");
-                                }
-                            }
-                        });*/
                     if(curLat!=0||curLat!=0) {
                         newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
                         newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
@@ -165,13 +156,6 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                         final BeaconFoundEvent bfeToUse=bfe;
                         try {
 
-                            /*
-                            newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString() + ":" + bfe.getBeaconFound().getId3().toString())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dbSnapShot) {
-                                    if (!dbSnapShot.hasChild(Long.toString(bfeToUse.getLastTime()))) {
-                                    */
                                         if(curLat!=0||curLat!=0) {
                                             newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
@@ -183,13 +167,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                                                     .child(Long.toString(bfeToUse.getLastTime())).child("hourID").setValue(Math.abs(uniqueIDperHour));
                                         }
                                         Log.d("UpdateThread","The observation was uploaded.");
-                                   /* }
-                                }
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {}
-                            });
-                            */
 
                         }catch (Exception e){}
                     }
