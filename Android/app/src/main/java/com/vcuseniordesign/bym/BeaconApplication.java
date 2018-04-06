@@ -37,7 +37,7 @@ public class BeaconApplication extends Application {
         try{
             Log.d("WriteFile",Environment.getRootDirectory().getAbsolutePath()+"/"+"SeniorDesignBYM");
 
-            File dir = new File(Environment.getRootDirectory().getPath()+"/"+"SeniorDesignBYM");
+            /*File dir = new File(Environment.getRootDirectory().getPath()+"/"+"SeniorDesignBYM");
             try{
                 if(dir.mkdir()) {
                     Log.d("WriteFile","Directory Created");
@@ -50,8 +50,8 @@ public class BeaconApplication extends Application {
 
             final File newDir = new File(Environment.getRootDirectory().getPath()+"/"+"SeniorDesignBYM"+"/"+"myBeaconTest.txt");
             //Log.d("WriteFile",getFilesDir().getAbsolutePath());
-            FileOutputStream fileOutput = new FileOutputStream(newDir);
-            //FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
+            FileOutputStream fileOutput = new FileOutputStream(newDir);*/
+            FileOutputStream fileOutput = this.openFileOutput("myBeacons.txt", Context.MODE_PRIVATE);
             String curBeaconInfo;
 
             ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) savedBeacons.clone();
@@ -83,10 +83,11 @@ public class BeaconApplication extends Application {
 
     public void storeFoundBeaconsInFile(){
         try{
-            Log.d("WriteFile",Environment.getDataDirectory().getPath());
-            final File newDir = new File(Environment.getRootDirectory().getPath()+"/"+"myBFE.txt");
+            //Log.d("WriteFile",Environment.getDataDirectory().getPath());
+            //final File newDir = new File(Environment.getRootDirectory().getPath()+"/"+"myBFE.txt");
             //Log.d("WriteFile",getFilesDir().getAbsolutePath());
-            FileOutputStream fileOutput = new FileOutputStream(newDir);
+            //FileOutputStream fileOutput = new FileOutputStream(newDir);
+            FileOutputStream fileOutput = this.openFileOutput("myBFE.txt", Context.MODE_PRIVATE);
 
             String curBeaconInfo;
             ArrayList<BeaconFoundEvent> savedBFEListCopy=(ArrayList<BeaconFoundEvent>)foundBeaconEvents.clone();

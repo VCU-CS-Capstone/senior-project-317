@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,6 +35,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
     HeatmapTileProvider generatedHeatMap;
     GoogleMap curMap;
     ProgressBar loadingCircleTwo;
+    EditText pointCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,11 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         loadingCircleTwo = (ProgressBar)findViewById(R.id.LoadingCircle2);
         loadingCircleTwo.setVisibility(View.VISIBLE);
+
+        pointCount = (EditText)findViewById(R.id.PointCount);
+        pointCount.setFocusable(false);
+        pointCount.setFocusableInTouchMode(false);
+        pointCount.setClickable(false);
 
         final FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference newDBRef = db.getReference();
@@ -104,6 +111,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
                     Log.d("HeatmapPoints","All points added. About to generate heatmap.");
                     generatedHeatMap=new HeatmapTileProvider.Builder().data(heatList).build();
                     curMap.addTileOverlay(new TileOverlayOptions().tileProvider(generatedHeatMap));
+                    pointCount.setText(Integer.toString(heatList.size())+" loaded points.");
                     Log.d("HeatmapLoading","The heatmap has been added. Starting next set.");
                     getNextBatch(recentTime);
                 }else{Log.d("HeatmapLoading","We have reached the end of the points");}
@@ -114,7 +122,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
 
 
         Log.d("Heatmap","We are about to request data");
-        Query lastQuery = newDBRef.child("heatmap").orderByKey().limitToFirst(5);
+        Query lastQuery = newDBRef.child("heatmap").orderByKey().limitToFirst(ELEMENTS_PER_BATCH);
         Log.d("Heatmap","We have requested the heatmap data");
 
         lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
@@ -184,6 +192,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
                 Log.d("HeatmapLoading","Last batch had "+count+" points.");
                 if(!(count<ELEMENTS_PER_BATCH)) {
                     Log.d("HeatmapPoints","All points added. About to generate heatmap. Number of points: "+heatList.size());
+                    pointCount.setText(Integer.toString(heatList.size())+" loaded points.");
                     generatedHeatMap.setData(heatList);
 
                     Log.d("HeatmapLoading","The heatmap has been added. Starting next set.");
@@ -191,6 +200,7 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
                 }else{
                     Log.d("HeatmapPoints","All points added. About to generate heatmap. Number of points: "+heatList.size());
                     generatedHeatMap.setData(heatList);
+                    pointCount.setText(Integer.toString(heatList.size())+" loaded points.");
                     Log.d("HeatmapLoading","We have reached the end of the points");
                     loadingCircleTwo.setVisibility(View.INVISIBLE);
                 }
@@ -211,16 +221,8 @@ public class heatMapActivity extends AppCompatActivity implements OnMapReadyCall
 
     public void onMapReady(GoogleMap googleMap) {
         curMap=googleMap;
-        ArrayList<Beacon> savedBeaconsCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
-        ArrayList<BeaconFoundEvent> foundBeaconEventsCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication)getApplication()).getFoundBeaconEvents().clone();
-        for(BeaconFoundEvent bfe: foundBeaconEventsCopy){
-            if(savedBeaconsCopy.contains(bfe.getBeaconFound())){
-                LatLng lastKnownLoc= new LatLng(bfe.getLastLat(),bfe.getLastLong());
-                //googleMap.addMarker(new MarkerOptions().position(lastKnownLoc).title(bfe.getBeaconNickname()));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(lastKnownLoc));
-                //mapDebug.append(bfe.getBeaconNickname()+ " Added\n");
-            }
-        }
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.546813,-77.450224)));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.546813, -77.450224), 13.0f));
 
     }
 }
