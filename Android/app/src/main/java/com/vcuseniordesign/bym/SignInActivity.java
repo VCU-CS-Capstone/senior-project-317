@@ -65,9 +65,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             Log.d("LoadBeacons",appFile+" is this long: "+Long.toString(tempFile.length()));
             Log.d("LoadBeacons","Can read: "+tempFile.canRead()+" Can write: "+tempFile.canWrite() );
         }
-        ((BeaconApplication)getApplication()).setSavedBeacons(getSavedBeaconsFromFile());
-        ((BeaconApplication)getApplication()).setFoundBeaconEvents(getFoundBeaconsFromFile());
-        ((BeaconApplication)getApplication()).setSavedBeaconsInfo(getSavedBeaconInfoFromFile());
+        ((BeaconApplication)getApplication()).setSavedBeacons(((BeaconApplication)getApplication()).getSavedBeaconsFromFile());
+        ((BeaconApplication)getApplication()).setFoundBeaconEvents(((BeaconApplication)getApplication()).getFoundBeaconsFromFile());
+        ((BeaconApplication)getApplication()).setSavedBeaconsInfo(((BeaconApplication)getApplication()).getSavedBeaconInfoFromFile());
 
         ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>)((BeaconApplication) getApplication()).getSavedBeacons().clone();
         ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
@@ -81,66 +81,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signIn();
     }
 
-    private ArrayList<Beacon> getSavedBeaconsFromFile(){
-        ArrayList<Beacon> acquiredSavedBeacons = new ArrayList<Beacon>();
-        try{
-            Log.d("LoadBeacons","We are about to load savedBeacons");
-            BufferedReader input = new BufferedReader(new InputStreamReader(
-                    openFileInput("myBeacons.txt")));
-            String curBeaconRow;
-            while((curBeaconRow = input.readLine())!=null){
-                Log.d("LoadBeacons",curBeaconRow+" is the current line (savedBeacons) \n");
-                String[] beaconIds;
-                beaconIds = curBeaconRow.split(",");
-                Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
-                acquiredSavedBeacons.add(beaconToAdd);
-            }
-            Log.d("LoadBeacons","We have loaded the savedBeacons");
-        }catch(FileNotFoundException fnf){
 
-        }catch(Exception e){}
-        return acquiredSavedBeacons;
-    }
-
-    private ArrayList<BeaconSaved> getSavedBeaconInfoFromFile(){
-        ArrayList<BeaconSaved> acquiredSavedBeaconInfo = new ArrayList<BeaconSaved>();
-        try{
-            Log.d("LoadBeacons","We are about to load savedBeaconsInfo");
-            BufferedReader input = new BufferedReader(new InputStreamReader(
-                    openFileInput("myBeacons.txt")));
-            String curBeaconRow;
-            while((curBeaconRow = input.readLine())!=null){
-                Log.d("LoadBeacons",curBeaconRow+" is the current line (savedBeaconsInfo) \n");
-                String[] beaconIds;
-                beaconIds = curBeaconRow.split(",");
-                Beacon beaconToAdd = new Beacon.Builder().setId1(beaconIds[0]).setId2(beaconIds[1]).setId3(beaconIds[2]).build();
-                acquiredSavedBeaconInfo.add(new BeaconSaved(beaconToAdd,beaconIds[3]));
-            }
-            Log.d("LoadBeacons","We have loaded the savedBeaconsInfo");
-        }catch(FileNotFoundException fnf){
-
-        }catch(Exception e){}
-        return acquiredSavedBeaconInfo;
-    }
-
-    private ArrayList<BeaconFoundEvent> getFoundBeaconsFromFile(){
-        ArrayList<BeaconFoundEvent> acquiredSavedBFE = new ArrayList<BeaconFoundEvent>();
-        try{
-            BufferedReader input = new BufferedReader(new InputStreamReader(
-                    openFileInput("myBFE.txt")));
-            String curBeaconRow;
-            while((curBeaconRow = input.readLine())!=null){
-                String[] bfeInfo;
-                bfeInfo = curBeaconRow.split(",");
-                Beacon beaconToAdd = new Beacon.Builder().setId1(bfeInfo[0]).setId2(bfeInfo[1]).setId3(bfeInfo[2]).build();
-                BeaconFoundEvent bfeToAdd = new BeaconFoundEvent(beaconToAdd,Double.parseDouble(bfeInfo[3]),Double.parseDouble(bfeInfo[4]),Long.parseLong(bfeInfo[5]));
-                acquiredSavedBFE.add(bfeToAdd);
-            }
-        }catch(FileNotFoundException fnf){
-
-        }catch(Exception e){}
-        return acquiredSavedBFE;
-    }
 
     private void signIn() {
         // Choose authentication providers
