@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">SeniorDesign</string>
+    <string name="app_name">SeniorDesignBYM</string>
 
-    <string name="signed_in">You have been signed in</string>
-    <string name="not_signed_in">You are not signed in</string>
+    <string name="signed_in">Signed in. Loading...</string>
+    <string name="not_signed_in">Not signed in</string>
+    <string name="working_on_sign_in">Signing you in...</string>
+    <string name="no_connection">Could not connect</string>
 
     <string name="settings_button">Settings</string>
 

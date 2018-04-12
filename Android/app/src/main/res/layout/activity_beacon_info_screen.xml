@@ -16,7 +16,6 @@
         android:layout_marginStart="36dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Keys"
         app:layout_constraintBottom_toTopOf="@+id/IDLabel"
         app:layout_constraintEnd_toStartOf="@+id/saveNicknameButton"
         app:layout_constraintStart_toStartOf="parent" />
@@ -32,15 +31,14 @@
         app:layout_constraintStart_toEndOf="@+id/beaconNickname"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
+    <TextView
         android:id="@+id/beaconIds"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:ems="10"
-        android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/IDLabel"
-        app:layout_constraintEnd_toEndOf="@+id/locationText"
-        app:layout_constraintStart_toStartOf="@+id/locationText"
+        app:layout_constraintEnd_toEndOf="@+id/timeText"
+        app:layout_constraintStart_toStartOf="@+id/timeText"
         app:layout_constraintTop_toTopOf="@+id/IDLabel" />
 
     <fragment
@@ -55,7 +53,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/findBeaconButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/LocationLabel" />
+        app:layout_constraintTop_toTopOf="@+id/timeLabel" />
 
     <Button
         android:id="@+id/unpairButton"
@@ -67,28 +65,27 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/locationText"
+    <TextView
+        android:id="@+id/timeText"
         android:layout_width="221dp"
         android:layout_height="0dp"
         android:layout_marginEnd="42dp"
         android:layout_marginTop="155dp"
         android:clickable="false"
         android:ems="10"
-        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/LocationLabel"
+        android:id="@+id/timeLabel"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="9dp"
-        android:text="Location:"
-        app:layout_constraintBottom_toBottomOf="@+id/locationText"
-        app:layout_constraintEnd_toStartOf="@+id/locationText"
+        android:text="Last Seen:"
+        app:layout_constraintBottom_toBottomOf="@+id/timeText"
+        app:layout_constraintEnd_toStartOf="@+id/timeText"
         app:layout_constraintStart_toStartOf="@+id/mapFrag"
-        app:layout_constraintTop_toTopOf="@+id/locationText" />
+        app:layout_constraintTop_toTopOf="@+id/timeText" />
 
     <TextView
         android:id="@+id/IDLabel"
@@ -96,9 +93,9 @@
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:text="Beacon ID:"
-        app:layout_constraintBottom_toTopOf="@+id/LocationLabel"
-        app:layout_constraintEnd_toEndOf="@+id/LocationLabel"
-        app:layout_constraintStart_toStartOf="@+id/LocationLabel" />
+        app:layout_constraintBottom_toTopOf="@+id/timeLabel"
+        app:layout_constraintEnd_toEndOf="@+id/timeLabel"
+        app:layout_constraintStart_toStartOf="@+id/timeLabel" />
 
     <Button
         android:id="@+id/findBeaconButton"
@@ -106,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="33dp"
-        android:text="FindBeacon"
+        android:text="Refresh"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/unpairButton" />
 

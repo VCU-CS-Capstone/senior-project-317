@@ -11,11 +11,18 @@ import UIKit
 import Firebase
 import GoogleSignIn
 
+// We sign-in to Firebase *through* google sign-in.
+// See https://firebase.google.com/docs/auth/ios/google-signin#3_authenticate_with_firebase
+// There is a difference. We choose not to use the Firebase pre-built UI.... because documentation sucked
+
 class SignInViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        FirebaseApp.configure()
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        
         GIDSignIn.sharedInstance().delegate = self
         GIDSignIn.sharedInstance().uiDelegate = self
         
@@ -44,9 +51,21 @@ class SignInViewController: UIViewController, GIDSignInUIDelegate, GIDSignInDele
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
         if (error == nil) {
-            performSegue(withIdentifier: "signedInSegue", sender: self)
+            guard let authentication = user.authentication else { return }
+            let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                           accessToken: authentication.accessToken)
+            
+            Auth.auth().signIn(with: credential) { (user, error) in
+                if let error = error {
+                    // handle Firebase Sign-in error
+                    print("ERROR")
+                } else {
+                    // User has signed in and Firebase has authenaticated
+                    self.performSegue(withIdentifier: "signedInSegue", sender: self)
+                }
+            }
         } else {
-            // Handle error
+            // Handle sign-in error
         }
     }
 

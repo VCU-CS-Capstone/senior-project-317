@@ -35,13 +35,22 @@ public class homeBeaconButtonAdapter extends ArrayAdapter<Beacon> {
             v=vi.inflate(R.layout.beacon_list_button,null);
         }
         final Beacon curBeacon = getItem(position);
+        BeaconSaved currentBeaconInfo = null;
+        ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) curTagScreen.getApplication()).getSavedBeaconsInfo().clone();
+        for(BeaconSaved curBeaconInfo:beaconInfoCopy){
+            if(curBeaconInfo.getCurBeacon().equals(curBeacon)){
+                currentBeaconInfo=curBeaconInfo;
+            }
+        }
 
         if(curBeacon != null){
             final Button mainButton = (Button) v.findViewById(R.id.MainButton);
 
             if(mainButton!=null){
-                mainButton.setText(curBeacon.getId2().toString()+"\n"+System.currentTimeMillis());
-                mainButton.setOnClickListener(new View.OnClickListener() {
+                if(currentBeaconInfo!=null)
+                mainButton.setText("Name: "+currentBeaconInfo.getBeaconName()+"\n"+"Major: " +curBeacon.getId2().toString()+"\n"+"Minor: "+curBeacon.getId3());
+                else mainButton.setText("Major: " +curBeacon.getId2().toString()+"\n"+"Minor: "+curBeacon.getId3());
+                    mainButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         curTagScreen.launchMoreBeaconInfo(curBeacon);
                     }

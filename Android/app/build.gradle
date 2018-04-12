@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 
-
 android {
     signingConfigs {
         commonDebugKey {
@@ -12,16 +11,17 @@ android {
         }
     }
 
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.vcuseniordesign.bym"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+        multiDexEnabled=true
     }
     buildTypes {
         release {
@@ -36,25 +36,40 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:design:25.4.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // ANDROID STUFF
+    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.estimote:sdk:1.3.0'
-    compile 'org.altbeacon:android-beacon-library:2.+'
-    compile 'com.google.android.gms:play-services-auth:11.4.2'
-    compile 'com.google.firebase:firebase-database:11.4.2'
-    compile 'com.google.firebase:firebase-core:11.4.2'
     testCompile 'junit:junit:4.12'
-    compile 'com.google.android.gms:play-services-maps:11.4.2'
-    compile 'com.google.maps.android:android-maps-utils:0.5+'
 
+    // BLUETOOTH STUFF
+    implementation 'com.estimote:sdk:1.3.0'
+    implementation 'org.altbeacon:android-beacon-library:2.12.4'
+
+    // MAPS STUFF
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
+
+    // FIREBASE STUFF - DATABASE
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-database:11.8.0'
+
+    // FIREBASE STUFF - AUTH
+    implementation 'com.firebaseui:firebase-ui-auth:3.1.0' // The problem child... Depends on outdated versions of other dependencies.
+                                                            // So, we need to import all the below separately just to keep things okay.
+                                                            // Also, not supposed to need FB or Twitter. BUT, it crashes otherwise, so yeah.
+        implementation 'com.google.firebase:firebase-auth:11.8.0'
+        implementation 'com.google.android.gms:play-services-base:11.8.0'
+        implementation 'com.google.android.gms:play-services-auth:11.8.0'
+
+        implementation('com.facebook.android:facebook-android-sdk:4.27.0') // Required only if Facebook login support is required
+        implementation("com.twitter.sdk.android:twitter-core:3.0.0@aar") { transitive = true } // Required only if Twitter login support is required
 }
 
 apply plugin: 'com.google.gms.google-services'
-
-//for firebase

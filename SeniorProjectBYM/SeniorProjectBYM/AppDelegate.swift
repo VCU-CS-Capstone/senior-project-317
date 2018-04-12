@@ -8,11 +8,14 @@
 
 import UIKit
 
+<<<<<<< HEAD
 import Firebase
 import GoogleSignIn
 import GoogleMaps
 import CoreLocation
 
+=======
+>>>>>>> fbeb639557f46cf9083026b67e1ed0ba6223199f
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate{
 
@@ -25,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+<<<<<<< HEAD
         UIApplication.shared.setMinimumBackgroundFetchInterval(1)
         //UIApplication.shared.setMinimumBackgroundFetchInterval(5)
         FirebaseApp.configure()
@@ -40,6 +44,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         startScanningForBeaconRegion(beaconRegion: getBeaconRegion())
         
          timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(self.backgroundAction), userInfo: nil, repeats: true)
+=======
+>>>>>>> fbeb639557f46cf9083026b67e1ed0ba6223199f
         
         return true
     }

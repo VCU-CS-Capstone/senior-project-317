@@ -4,24 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.vcuseniordesign.bym.SignInActivity"
-    tools:layout_editor_absoluteX="0dp"
-    tools:layout_editor_absoluteY="81dp">
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp" />
+    tools:context="com.vcuseniordesign.bym.SignInActivity">
 
     <TextView
         android:id="@+id/sign_in_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/not_signed_in"
+        android:layout_gravity="center"
+        android:text="@string/working_on_sign_in"
         android:textSize="30sp"
         android:textStyle="bold"
         android:visibility="visible" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        android:visibility="visible"/>
 
 </LinearLayout>

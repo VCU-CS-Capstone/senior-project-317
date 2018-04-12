@@ -14,8 +14,9 @@
         android:text="@string/sign_out_button" />
 
     <Button
-        android:id="@+id/go_back_button"
+        android:id="@+id/settingHeatmapButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/go_back_button" />
+        android:text="Heatmap" />
+
 </LinearLayout>

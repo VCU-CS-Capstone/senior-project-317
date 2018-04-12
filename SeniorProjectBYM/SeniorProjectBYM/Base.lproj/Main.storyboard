@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="ehn-yO-nN6">
+=======
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+>>>>>>> fbeb639557f46cf9083026b67e1ed0ba6223199f
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -459,7 +463,11 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="34"/>
                                 <state key="normal" title="Sign Out"/>
                                 <connections>
+<<<<<<< HEAD
                                     <action selector="signOut:" destination="dJS-x0-kmz" eventType="touchUpInside" id="FgJ-uC-hrh"/>
+=======
+                                    <action selector="signOut:" destination="dJS-x0-kmz" eventType="touchUpInside" id="sAK-gb-qF4"/>
+>>>>>>> fbeb639557f46cf9083026b67e1ed0ba6223199f
                                 </connections>
                             </button>
                         </subviews>

@@ -2,12 +2,14 @@ package com.vcuseniordesign.bym;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -28,12 +30,15 @@ import com.google.firebase.database.ValueEventListener;
 import org.altbeacon.beacon.Beacon;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCallback{
+    BeaconInfoScreen curScreen = this;
     BeaconFoundEvent currentBeaconEvent=new BeaconFoundEvent();
+    BeaconSaved currentBeaconInfo;
     TextView beaconName;
     TextView beaconIds;
-    TextView locationText;
+    TextView timeText;
     Button saveNicknameButton;
     Button unpairButton;
     Button findBeaconbutton;
@@ -50,34 +55,114 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
 
         if(getIntent().getSerializableExtra("beaconInfo")!=null){
             currentBeaconEvent=(BeaconFoundEvent)getIntent().getSerializableExtra("beaconInfo");
+            Log.d("GettingBeaconSavedInfo","Finding: "+currentBeaconEvent.getBeaconFound().getId2()+":"+currentBeaconEvent.getBeaconFound().getId3());
+
+            ArrayList<BeaconSaved> beaconInfoCopy = (ArrayList<BeaconSaved>)((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+
+            for(BeaconSaved curBeaconSaved: beaconInfoCopy){
+                Log.d("GettingBeaconSavedInfo",curBeaconSaved.getBeaconName()+" ID: "+curBeaconSaved.getCurBeacon().getId2()+":"+curBeaconSaved.getCurBeacon().getId3());
+            }
+
+            for(BeaconSaved curBeaconInfo:beaconInfoCopy){
+                Log.d("GettingBeaconSavedInfo",((curBeaconInfo.getCurBeacon().getId2()+":"+currentBeaconEvent.getBeaconFound().getId2())));
+                Log.d("GettingBeaconSavedInfo",((curBeaconInfo.getCurBeacon().getId3()+":"+currentBeaconEvent.getBeaconFound().getId3())));
+                if((curBeaconInfo.getCurBeacon().getId2().equals(currentBeaconEvent.getBeaconFound().getId2()))&&(curBeaconInfo.getCurBeacon().getId3().equals(currentBeaconEvent.getBeaconFound().getId3()))){
+                    currentBeaconInfo=curBeaconInfo;
+                    Log.d("GettingBeaconSavedInfo","We got the right BeaconSaved");
+                }
+            }
         }
+
+
+
         beaconName = (TextView) findViewById(R.id.beaconNickname);
         beaconIds = (TextView) findViewById(R.id.beaconIds);
-        locationText =(TextView) findViewById(R.id.locationText);
-        locationText.setText("Lat: "+currentBeaconEvent.getLastLat());
-        locationText.append("Long: "+currentBeaconEvent.getLastLong());
-        beaconName.setText(currentBeaconEvent.getBeaconNickname());
+        timeText =(TextView) findViewById(R.id.timeText);
+        Date dateFromTime = new Date(currentBeaconEvent.getLastTime());
+        timeText.setText(dateFromTime.toString());
+
+        //timeText.setText("Lat: "+currentBeaconEvent.getLastLat());
+        //timeText.append("Long: "+currentBeaconEvent.getLastLong());
+        beaconName.setText(currentBeaconInfo.getBeaconName());
         beaconIds.setText(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString());
         //beaconIds.append(currentBeaconEvent.getBeaconFound().getId3().toString());
         saveNicknameButton=(Button) findViewById(R.id.saveNicknameButton);
         saveNicknameButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 currentBeaconEvent.setBeaconNickname(beaconName.getText().toString());
-
+                currentBeaconInfo.setBeaconName(beaconName.getText().toString());
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(curScreen.getCurrentFocus().getWindowToken(), 0);
+                onBackPressed();
             }
         });
         unpairButton=(Button) findViewById(R.id.unpairButton);
         unpairButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                returnAndUnpair();
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(curScreen);
+                builder.setMessage("Are you sure you want to delete beacon(s)?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
 
+                                final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                                final DatabaseReference newDBRef = db.getReference();
+
+                                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                                connectedRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        boolean connected = snapshot.getValue(Boolean.class);
+                                        if (connected) {
+
+                                        } else {
+                                            db.goOnline();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError error) {
+                                        System.err.println("Listener was cancelled");
+                                    }
+                                });
+
+                                newDBRef.child("claimedBeacons").child(currentBeaconEvent.getBeaconFound().getId2()+":"+currentBeaconEvent.getBeaconFound().getId3()).removeValue();
+                                db.goOffline();
+
+                                returnAndUnpair();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+                builder.create().show();
             }
         });
         findBeaconbutton = (Button) findViewById(R.id.findBeaconButton);
         findBeaconbutton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                final FirebaseDatabase db = FirebaseDatabase.getInstance();
                 DatabaseReference newDBRef = db.getReference();
+
+                DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                connectedRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        boolean connected = snapshot.getValue(Boolean.class);
+                        if (connected) {
+
+                        } else {
+                            db.goOnline();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        System.err.println("Listener was cancelled");
+                    }
+                });
+
                 Query lastQuery = newDBRef.child("observations").child(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString()).orderByKey().limitToLast(1);
 
 
@@ -95,7 +180,7 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
                 };
                 lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
 
-
+                db.goOffline();
             }
         });
 
@@ -104,13 +189,57 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
             public void onReceive(Context context, Intent intent) {
                 if(intent.getStringExtra("UpdateIntent")!=null) {
                     Log.d("BaconUpdateReceiverBIS","WE ARE UPDATING THE MORE INFO SCREEN");
+                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    DatabaseReference newDBRef = db.getReference();
 
+                    DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                    connectedRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            boolean connected = snapshot.getValue(Boolean.class);
+                            if (connected) {
+
+                            } else {
+                                db.goOnline();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError error) {
+                            System.err.println("Listener was cancelled");
+                        }
+                    });
+
+                    Query lastQuery = newDBRef.child("observations").child(currentBeaconEvent.getBeaconFound().getId2().toString()+":"+currentBeaconEvent.getBeaconFound().getId3().toString()).orderByKey().limitToLast(1);
+
+
+                    ValueEventListener getMostRecentValue = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot mostRecentEvent:dataSnapshot.getChildren()) {
+                                Double newLat = (Double) mostRecentEvent.child("latitude").getValue();
+                                Double newLong = (Double) mostRecentEvent.child("longitude").getValue();
+                                updateMap(new LatLng(newLat, newLong));
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {}
+                    };
+                    lastQuery.addListenerForSingleValueEvent(getMostRecentValue);
+
+                    db.goOffline();
                 }
             }
         };
         registerReceiver(updateReceiver,new IntentFilter("com.vcuseniordesign.bym"));
 
 
+    }
+
+    public void onBackPressed() {
+        Intent intent = new Intent(this, TagInfo.class);
+        startActivity(intent);
+        //super.onBackPressed();
     }
 
     public void onPause(){
@@ -126,22 +255,42 @@ public class BeaconInfoScreen extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap){
         curMap=googleMap;
         LatLng lastKnownLoc= new LatLng(currentBeaconEvent.getLastLat(),currentBeaconEvent.getLastLong());
-        curMarker =googleMap.addMarker(new MarkerOptions().position(lastKnownLoc).title(currentBeaconEvent.getBeaconNickname()));
+
+        String titleText = currentBeaconEvent.getBeaconNickname();
+        if (titleText.equals("empty") || titleText.equals("") || titleText.equals(" ")) {
+            titleText = "Scanned by user";
+        }
+        curMarker =googleMap.addMarker(new MarkerOptions().position(lastKnownLoc).title(titleText));
+
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(lastKnownLoc));
         curMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }
 
     public void updateMap(LatLng newLoc){
         curMarker.remove();
-        curMarker=curMap.addMarker(new MarkerOptions().position(newLoc).title(currentBeaconEvent.getBeaconNickname()));
-        locationText.setText("Lat: "+newLoc.latitude);
-        locationText.append(" Long: "+newLoc.longitude);
+
+        String titleText = currentBeaconEvent.getBeaconNickname();
+        if (titleText.equals("empty") || titleText.equals("") || titleText.equals(" ")) {
+            titleText = "Scanned by user";
+        }
+
+        curMarker=curMap.addMarker(new MarkerOptions().position(newLoc).title(titleText));
+        //timeText.setText("Lat: "+newLoc.latitude);
+        //timeText.append(" Long: "+newLoc.longitude);
         curMap.moveCamera(CameraUpdateFactory.newLatLng(newLoc));
         curMap.moveCamera(CameraUpdateFactory.zoomTo(16));
     }
 
 
     public void returnAndUnpair(){
+        ArrayList<BeaconSaved> savedBeaconInfoCopy = (ArrayList<BeaconSaved>) ((BeaconApplication)getApplication()).getSavedBeaconsInfo().clone();
+        ArrayList<BeaconSaved> savedBeaconInfoCopyEdit = (ArrayList<BeaconSaved>) ((BeaconApplication)getApplication()).getSavedBeaconsInfo().clone();
+        for(BeaconSaved curBeaconSaved:savedBeaconInfoCopy){
+            if(curBeaconSaved==currentBeaconInfo){
+                savedBeaconInfoCopyEdit.remove(curBeaconSaved);
+            }
+        }
+        ((BeaconApplication)getApplication()).setSavedBeaconsInfo(savedBeaconInfoCopyEdit);
         Intent intent = new Intent(this, TagInfo.class);
         intent.putExtra("beaconToUnpair",currentBeaconEvent);
         startActivity(intent);

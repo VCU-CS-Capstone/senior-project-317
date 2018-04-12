@@ -7,7 +7,11 @@ target 'SeniorProjectBYM' do
 
   # Pods for SeniorProjectBYM
   pod 'Firebase/Core'
+<<<<<<< HEAD
   pod 'Firebase/Database'
+=======
+  pod 'Firebase/Auth'
+>>>>>>> fbeb639557f46cf9083026b67e1ed0ba6223199f
   pod 'GoogleSignIn'
   pod 'GoogleMaps'
   pod 'GooglePlaces'

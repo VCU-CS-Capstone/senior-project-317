@@ -1,33 +1,24 @@
 package com.vcuseniordesign.bym;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 public class SettingsActivity extends AppCompatActivity implements
-            GoogleApiClient.OnConnectionFailedListener,
             View.OnClickListener {
-
-    private static final String TAG = "SettingsActivity";
-    private static final int RC_SIGN_IN = 9001;
-
-    private GoogleApiClient mGoogleApiClient;
+    final String SUPER_SECURE_HARDCODED_PASSWORD="4040";
+    String passInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,23 +27,8 @@ public class SettingsActivity extends AppCompatActivity implements
 
         // Button listeners
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.go_back_button).setOnClickListener(this);
-
-        // Configure sign-in to request the user's ID, email address, and basic
-        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        // Build a GoogleApiClient with access to the Google Sign-In API and the
-        // options specified by gso.
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        findViewById(R.id.settingHeatmapButton).setOnClickListener(this);
     }
-
-
 
     @Override
     public void onClick(View v) {
@@ -60,22 +36,50 @@ public class SettingsActivity extends AppCompatActivity implements
             case R.id.sign_out_button:
                 signOut();
                 break;
-            case R.id.go_back_button:
-                launchTagInfoActivity();
+            case R.id.settingHeatmapButton:
+                Log.d("settingHeatmap","We are about to make the password popup");
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Enter Heatmap Password");
+
+
+                final EditText inputText = new EditText(this);
+
+                inputText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(inputText);
+
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        passInput = inputText.getText().toString();
+                        if(passInput.equals(SUPER_SECURE_HARDCODED_PASSWORD)){
+                            goToHeatmap();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
                 break;
         }
     }
 
-    private void launchTagInfoActivity() {
-        Intent intent = new Intent(this, TagInfo.class);
+    private void goToHeatmap(){
+        Intent intent = new Intent(this,heatMapActivity.class);
         startActivity(intent);
     }
 
     private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
+        AuthUI.getInstance()
+                .signOut(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    public void onComplete(@NonNull Task<Void> task) {
                         launchSignInActivity();
                     }
                 });
@@ -84,12 +88,5 @@ public class SettingsActivity extends AppCompatActivity implements
     private void launchSignInActivity() {
         Intent intent = new Intent(this, SignInActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 }

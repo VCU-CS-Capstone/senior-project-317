@@ -2,7 +2,9 @@ package com.vcuseniordesign.bym;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
@@ -11,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -29,7 +32,9 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.TimeZone;
 
 
 public class BeaconTracker extends Service implements BeaconConsumer {
@@ -37,17 +42,17 @@ public class BeaconTracker extends Service implements BeaconConsumer {
     LocationManager phoneLocationManager;
     double curLat, curLong;
     Thread updateThread;
-    boolean[] isServiceStillRunning = new boolean[4];
+    boolean[] isServiceStillRunning = new boolean[]{true,true,true,true};
 
     @Override
     public void onCreate(){
         beaconManager = BeaconManager.getInstanceForApplication(this);
         beaconManager.bind(this);
         beaconManager.getBeaconParsers().add(new BeaconParser("CorrectParse").setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        beaconManager.setForegroundScanPeriod(3100);
+        beaconManager.setForegroundScanPeriod(3000);
         beaconManager.setForegroundBetweenScanPeriod(1000);
-        beaconManager.setBackgroundScanPeriod(5100);
-        beaconManager.setBackgroundBetweenScanPeriod(2000);
+        beaconManager.setBackgroundScanPeriod(5000);
+        beaconManager.setBackgroundBetweenScanPeriod(30000);
         phoneLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         try{
             phoneLocationManager.requestLocationUpdates(phoneLocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
@@ -63,6 +68,7 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 @Override
                 public void onProviderDisabled(String provider) {}
             });}catch(SecurityException e){}
+        Log.d("StartingService","We are starting the beaconTracker service");
         runUpdateThread();
     }
 
@@ -73,49 +79,103 @@ public class BeaconTracker extends Service implements BeaconConsumer {
             @Override
             public void run() {
                 try {
+
                     while(isServiceStillRunning[0] || isServiceStillRunning[1] || isServiceStillRunning[2] || isServiceStillRunning[3]){
+
+                        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                        if (mBluetoothAdapter == null) {
+                            break;
+                        } else {
+                            if (!mBluetoothAdapter.isEnabled()) {
+                                break;
+                            }
+                        }
                     //doStuff
 
                     ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
-                    BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
-                    foundBeaconEventCopy.add(locationBeacon);
+                    ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication) getApplication()).getSavedBeacons().clone();
+                    Log.d("UTSavedBeaconSize","Saved beacon size is: "+savedBeaconCopy.size());
+                    for(Beacon tempSaved:savedBeaconCopy){
+                        Log.d("UTSavedBeaconSize","UUID: " +tempSaved.getId1()+"\n Major: "+tempSaved.getId2()+"\n Minor: "+tempSaved.getId3());
+                    }
+                        ArrayList<BeaconSaved> savedBeaconInfoCopy = (ArrayList<BeaconSaved>) ((BeaconApplication) getApplication()).getSavedBeaconsInfo().clone();
+                        Log.d("UTSavedBeaconInfoSize","Saved beaconInfo size is: "+savedBeaconInfoCopy.size());
+                        for(BeaconSaved tempSaved:savedBeaconInfoCopy){
+                            Log.d("UTSavedBeaconInfoSize","UUID: " +tempSaved.getCurBeacon().getId1()+"\n Major: "+tempSaved.getCurBeacon().getId2()+"\n Minor: "+tempSaved.getCurBeacon().getId3()+"\n"+"Name: "+ tempSaved.getBeaconName());
+                        }
+
+                        //BeaconFoundEvent locationBeacon = new BeaconFoundEvent(new Beacon.Builder().build(),curLat,curLong,System.currentTimeMillis());
+                    //foundBeaconEventCopy.add(locationBeacon);
+
+                    Log.d("UpdateThreadBeaconSize","foundBeaconEventSize = " + foundBeaconEventCopy.size());
+                    for(BeaconFoundEvent tempBFE:foundBeaconEventCopy){
+                        Log.d("UpdateThreadBeaconSize","UUID: " +tempBFE.getBeaconFound().getId1()+"\n Major: "+tempBFE.getBeaconFound().getId2()+"\n Minor: "+tempBFE.getBeaconFound().getId3());
+                    }
+
                     Log.d("UpdateThread","updateThreadisStillRunning"+isServiceStillRunning[0]+isServiceStillRunning[1]+isServiceStillRunning[2]+isServiceStillRunning[3]);
-                    FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    final FirebaseDatabase db = FirebaseDatabase.getInstance();
                     final DatabaseReference newDBRef = db.getReference();
 
-                    Long curTime = System.currentTimeMillis();
-                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("latitude").setValue(curLat);
-                    newDBRef.child("observations").child("locations").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+                        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+                        connectedRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                boolean connected = snapshot.getValue(Boolean.class);
+                                if (connected) {
 
+                                } else {
+                                    db.goOnline();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError error) {
+                                System.err.println("Listener was cancelled");
+                            }
+                        });
+
+                        Long curTime = System.currentTimeMillis();
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeZone(TimeZone.getTimeZone("EST"));
+                        calendar.setTimeInMillis(curTime);
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int hourValue= hour*calendar.get(Calendar.DAY_OF_YEAR);
+
+                        String curAndroid_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                        int userHash = curAndroid_id.hashCode();
+                        final int uniqueIDperHour= userHash*hourValue;
+
+
+                    if(curLat!=0||curLat!=0) {
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("latitude").setValue(curLat);
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("longitude").setValue(curLong);
+                        newDBRef.child("heatmap").child(Long.toString(curTime)).child("hourID").setValue(Math.abs(uniqueIDperHour));
+                    }
                     for (BeaconFoundEvent bfe : foundBeaconEventCopy) {
-                        Log.d("UpdateThread","foundBeaconEventSize = " + foundBeaconEventCopy.size());
-
                         final BeaconFoundEvent bfeToUse=bfe;
                         try {
 
-                            newDBRef.child("observations").child(bfe.getBeaconFound().getId2().toString() + ":" + bfe.getBeaconFound().getId3().toString())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dbSnapShot) {
-                                    if (!dbSnapShot.hasChild(Long.toString(bfeToUse.getLastTime()))) {
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("longitude").setValue(bfeToUse.getLastLong());
-                                        newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
-                                                .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue(bfeToUse.getBeaconNickname());
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {}
-                            });
+                                        if(curLat!=0||curLat!=0) {
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("latitude").setValue(bfeToUse.getLastLat());
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("longitude").setValue(bfeToUse.getLastLong());
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("message").setValue("No additional Info");
+                                            newDBRef.child("observations").child(bfeToUse.getBeaconFound().getId2().toString() + ":" + bfeToUse.getBeaconFound().getId3().toString())
+                                                    .child(Long.toString(bfeToUse.getLastTime())).child("hourID").setValue(Math.abs(uniqueIDperHour));
+                                        }
+                                        Log.d("UpdateThread","The observation was uploaded.");
 
 
                         }catch (Exception e){}
                     }
-                    //((ArrayList<BeaconFoundEvent>) ((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
-                    Log.d("UpdateThread","We got this far");
+                    (((BeaconApplication) getApplication()).getFoundBeaconEvents()).clear();
+                    (((BeaconApplication) getApplication()).getFoundBeacons()).clear();
+                    Log.d("UpdateThread","We just cleared the FoundBeaconEvents");
+
+                    db.goOffline();
 
                     sleep(10000);
 
@@ -145,6 +205,19 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 ArrayList<Beacon> foundBeaconsCopy = (ArrayList<Beacon>)((BeaconApplication) getApplication()).getFoundBeacons().clone();
                 ArrayList<BeaconFoundEvent> foundBeaconEventCopy = (ArrayList<BeaconFoundEvent>)((BeaconApplication) getApplication()).getFoundBeaconEvents().clone();
                 if (beacons.size() > 0) {
+
+                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    if (mBluetoothAdapter == null) {
+                        Log.d("DeadService","Bluetooth is not available on this device. Shutting down service.");
+                        stopSelf();
+                    } else {
+                        Log.d("DeadService","Bluetooth is on: "+mBluetoothAdapter.isEnabled());
+                        if (!mBluetoothAdapter.isEnabled()) {
+                            Log.d("DeadService","Bluetooth is not turned on on this device. Shutting down service.");
+                            stopSelf();
+                        }
+                    }
+
                     for(Beacon b :beacons) {
                         Log.d("FoundBeacon","THE FOUND BEACON UUID IS : "+b.getId1());
                         if (!foundBeaconsCopy.contains(b)&&b.getId1().toString().equals("d0d3fa86-ca76-45ec-9bd9-6af4f6016926")){
@@ -167,6 +240,9 @@ public class BeaconTracker extends Service implements BeaconConsumer {
                 BeaconApplication curApp=((BeaconApplication)getApplication());
                 curApp.setFoundBeacons(foundBeaconsCopy);
                 curApp.setFoundBeaconEvents(foundBeaconEventCopy);
+                Log.d("BaconUpdatingService","We just set the foundBeaconEvents, SIZE: "+foundBeaconEventCopy.size());
+
+
 
                 Intent updateListIntent = new Intent();
                 updateListIntent.setAction("com.vcuseniordesign.bym");

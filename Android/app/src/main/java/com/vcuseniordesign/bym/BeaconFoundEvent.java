@@ -5,7 +5,7 @@ import org.altbeacon.beacon.Beacon;
 import java.io.Serializable;
 
 public class BeaconFoundEvent implements Serializable {
-    String beaconNickname = "empty";
+    String beaconNickname = "empty";    // This is the field we want to use with the Raspberry Pis
     Beacon beaconFound;
     double lastLat;
     double lastLong;
