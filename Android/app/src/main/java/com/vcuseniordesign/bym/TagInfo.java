@@ -708,5 +708,25 @@ public class TagInfo extends AppCompatActivity /*implements BeaconConsumer */{
         startActivity(intent);
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        BeaconApplication curApp=((BeaconApplication)getApplication());
+        curApp.setSavedBeacons(curApp.getSavedBeaconsFromFile());
+        curApp.setSavedBeaconsInfo(curApp.getSavedBeaconInfoFromFile());
+        curApp.setFoundBeaconEvents(curApp.getFoundBeaconsFromFile());
+
+        deviceListAdapter.clear();
+        beaconList.clear();
+        if (((BeaconApplication)getApplication()).getSavedBeacons().size() == 0){ deviceListAdapter.add(null);
+        }else{
+            ArrayList<Beacon> savedBeaconCopy = (ArrayList<Beacon>) ((BeaconApplication)getApplication()).getSavedBeacons().clone();
+            for(Beacon curBeacon:savedBeaconCopy){
+                beaconList.add(curBeacon);
+                deviceListAdapter.add(curBeacon);
+            }
+        }
+    }
+
 }
 
