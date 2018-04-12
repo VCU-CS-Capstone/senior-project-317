@@ -7,6 +7,9 @@ target 'SeniorProjectBYM' do
 
   # Pods for SeniorProjectBYM
   pod 'Firebase/Core'
+  pod 'Firebase/Database'
   pod 'GoogleSignIn'
+  pod 'GoogleMaps'
+  pod 'GooglePlaces'
 
 end

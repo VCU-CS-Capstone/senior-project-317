@@ -12,12 +12,14 @@
 		0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */; };
 		0A0E05961FA17F26008AD428 /* DisplayBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */; };
 		0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */; };
+		0A489784201A608400F76E90 /* HeatMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A489783201A608400F76E90 /* HeatMapViewController.swift */; };
 		0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380B1F84714500B4799E /* AppDelegate.swift */; };
 		0A73380E1F84714500B4799E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73380D1F84714500B4799E /* ViewController.swift */; };
 		0A7338111F84714500B4799E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A73380F1F84714500B4799E /* Main.storyboard */; };
 		0A7338131F84714500B4799E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A7338121F84714500B4799E /* Assets.xcassets */; };
 		0A8767771F9019D2007B1A53 /* TrackViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767761F9019D2007B1A53 /* TrackViewController.swift */; };
 		0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8767781F951A39007B1A53 /* SignInViewController.swift */; };
+		0A8A82C41FE4267E0029AE05 /* BeaconListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A82C31FE4267E0029AE05 /* BeaconListViewController.swift */; };
 		0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */; };
 		0AABC4A01FA7DE68009F17B7 /* AddBeaconTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */; };
 		65488472AE116FE47468C6A0 /* Pods_SeniorProjectBYM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A39FA580BA8561338635B7DC /* Pods_SeniorProjectBYM.framework */; };
@@ -30,6 +32,7 @@
 		0A0E05931FA14FC1008AD428 /* BeaconTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconTableViewController.swift; sourceTree = "<group>"; };
 		0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayBeaconViewController.swift; sourceTree = "<group>"; };
 		0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconViewController.swift; sourceTree = "<group>"; };
+		0A489783201A608400F76E90 /* HeatMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatMapViewController.swift; sourceTree = "<group>"; };
 		0A7338081F84714500B4799E /* SeniorProjectBYM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeniorProjectBYM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A73380B1F84714500B4799E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A73380D1F84714500B4799E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -38,6 +41,7 @@
 		0A7338171F84714500B4799E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A8767761F9019D2007B1A53 /* TrackViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackViewController.swift; sourceTree = "<group>"; };
 		0A8767781F951A39007B1A53 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		0A8A82C31FE4267E0029AE05 /* BeaconListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeaconListViewController.swift; sourceTree = "<group>"; };
 		0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconTableViewCell.swift; sourceTree = "<group>"; };
 		0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBeaconTableViewController.swift; sourceTree = "<group>"; };
 		64FCF353E89162CDA6F9327F /* Pods-SeniorProjectBYM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SeniorProjectBYM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM.debug.xcconfig"; sourceTree = "<group>"; };
@@ -92,10 +96,12 @@
 				0A0E058F1F9FA350008AD428 /* BeaconTableViewCell.swift */,
 				0A0E05911F9FA976008AD428 /* Beacon.swift */,
 				0A0E05951FA17F26008AD428 /* DisplayBeaconViewController.swift */,
+				0A8A82C31FE4267E0029AE05 /* BeaconListViewController.swift */,
 				0A0E05971FA188B9008AD428 /* AddBeaconViewController.swift */,
 				0AABC49F1FA7DE68009F17B7 /* AddBeaconTableViewController.swift */,
 				0AABC49D1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift */,
 				C86C3BE11FA775C800D0A1AF /* GoogleService-Info.plist */,
+				0A489783201A608400F76E90 /* HeatMapViewController.swift */,
 			);
 			path = SeniorProjectBYM;
 			sourceTree = "<group>";
@@ -154,6 +160,11 @@
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -196,6 +207,8 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SeniorProjectBYM/Pods-SeniorProjectBYM-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -235,6 +248,7 @@
 				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -242,6 +256,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A489784201A608400F76E90 /* HeatMapViewController.swift in Sources */,
 				0A8767791F951A39007B1A53 /* SignInViewController.swift in Sources */,
 				0A0E05901F9FA350008AD428 /* BeaconTableViewCell.swift in Sources */,
 				0A73380E1F84714500B4799E /* ViewController.swift in Sources */,
@@ -264,6 +280,7 @@
 				0AABC49E1FA7DC91009F17B7 /* AddBeaconTableViewCell.swift in Sources */,
 				0A0E05941FA14FC1008AD428 /* BeaconTableViewController.swift in Sources */,
 				0A0E05921F9FA976008AD428 /* Beacon.swift in Sources */,
+				0A8A82C41FE4267E0029AE05 /* BeaconListViewController.swift in Sources */,
 				0A73380C1F84714500B4799E /* AppDelegate.swift in Sources */,
 				0AABC4A01FA7DE68009F17B7 /* AddBeaconTableViewController.swift in Sources */,
 				0A0E05981FA188B9008AD428 /* AddBeaconViewController.swift in Sources */,
