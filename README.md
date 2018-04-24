@@ -1,8 +1,8 @@
 # senior-project-317: Campus Bluetooth Tag Network
 VCU CS Senior Project 317, Fall 2017 - Spring 2018. 
-Repository for code and for documentation.
 
 Faculty adviser/mentor: Dr. Bulut
+
 Team members: Nicholas Bennnett, Jordan Mays-Rowland, Justin Yirka
 
 ## Project goal 
@@ -10,6 +10,7 @@ Design an open-source alternative to commercial item-tracking products such as T
 
 ## Brief description of product
 We developed an Android and iOS app which interacted with a Google Firebase database, succesfully replicating many of the features of existing products like Tile.
+
 A significant novel feature was the design of 'fixed scanners' using Raspberry Pis.
 
 ## Contents
