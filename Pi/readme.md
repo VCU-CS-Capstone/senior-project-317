@@ -1,3 +1,5 @@
+# senior-project-317: Campus Bluetooth Tag Network
+# Pi
 This repo contains the code and instructions used to create an iBeacon scanner out of our Raspberry Pis.
 
 The Pis are setup to be plug-and-play. Simply plug them in, and they will start scanning and uploading.

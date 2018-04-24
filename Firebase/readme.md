@@ -1,4 +1,5 @@
-# Firebase Functions
+# senior-project-317: Campus Bluetooth Tag Network
+## Firebase
 This folder is used to store files required to deploy functions in Firebase.
 This includes functions to automatically edit the database.
 
