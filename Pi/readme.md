@@ -1,6 +1,6 @@
 # senior-project-317: Campus Bluetooth Tag Network
 ## Pi
-We designed a novel feature for our system, implementing 'fixed scanners' using Raspberry Pis.
+We designed a novel feature for our system: implementing 'fixed scanners' using Raspberry Pis.
 
 Unlike products like Tile, our product was meant for particular campus. We use this fact and install scanners around campus, inside buildings, to scan for beacons in our network. This helps overcome the issue of GPS imprecision, **especially indoors**. For example, observations reported from these scanners may include messages like "3rd floor of library" or "room 301", which will be displayed to users.
 
