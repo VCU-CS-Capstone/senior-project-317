@@ -17,6 +17,6 @@ A significant novel feature was the design of 'fixed scanners' using Raspberry P
 - iOS code and documentation is in [SeniorProjectBYM](./SeniorProjectBYM)
 - Raspberry Pi code and documentation is in [Pi](./Pi)
 - Documentation, as well as some code which we ended up not using, for our Firebase instance is in [Firebase](./Firebase)
-- Assignment and presentations related to the Senior Design class are in [Assignments and Presentations](./Assignements%20and%20Presentations)
+- Assignment and presentations related to the Senior Design class are in [Assignments and Presentations](./Assignments%20and%20Presentations)
 
 Further documentation is in [Documentation](./Documentation). This includes some descriptions of the goals, outcomes, and limitations of the project, and documentation regarding the whole system.
