@@ -1,31 +1,36 @@
 # senior-project-317: Campus Bluetooth Tag Network
-# Pi
-This repo contains the code and instructions used to create an iBeacon scanner out of our Raspberry Pis.
+## Pi
+We designed a novel feature for our system, implementing 'fixed scanners' using Raspberry Pis.
 
+Unlike products like Tile, our product was meant for particular campus. We use this fact and install scanners around campus, inside buildings, to scan for beacons in our network. This helps overcome the issue of GPS imprecision, **especially indoors**. For example, observations reported from these scanners may include messages like "3rd floor of library" or "room 301", which will be displayed to users.
+
+## Pi Passwords 
+All Pis are currently setup with these credentials **(This should be deleted and the passwords changed before Pis are put back into use!!)**
+- Username: pi
+- Password: MowingLabDahlbergsBest
+
+## Pi setup
+See [Pi_Setup](./pi_setup.md) instructions on how to set up new fixed scanners.
+
+## List of Pis
+See [Locations](./locations.md) for a list of Pis and their programmed locations.
+
+## How to use a Pi (after setup)
 The Pis are setup to be plug-and-play. Simply plug them in, and they will start scanning and uploading.
 
-Note: Pis are setup to restart every 90min. So, it is possible they'll turn off when you don't expect (see crontab file).
+Note: Pis are setup to restart every 90min. So, it is possible they'll turn off when you don't expect (see info below regarding the crontab file).
 
-See pi_setup.md for instructions on setting up a new Pi.
-
-You'll need the local IPs to ssh in (though note, VCU blocks ssh on SafeNet).
-Otherwise, you'll need to plug in to monitor and keyboard and run `hostname -I`, or you'll need DNS set up.
-
-Note that several keys or files are missing, because we don't want to publish passwords on GitHub.
-This includes: 
-- serviceAccountKey.json - Can get a new one off of firebase
-- wpa_supplicant.conf - WiFi password deleted. Any VCU user will do.
-- Pi passwords - ask Justin
-
-Description of files:
-- wpa_supplicant.conf - Info for connecting Pi to VCU SafeNet.
-- AddTrustExternalCARoot.crt - Used to connect to VCU SafeNet. Wee wpa_supplicant.conf for instructions.
-- crontab - Contains jobs to be placed in root's crontab. Runs our script on reboot. Also reboots Pi periodically, in case our script had issues and exited. Edit how often by editing this file.
-- ibeacon_scan.sh - A helper script. Performs the actual scanning. Called by tagScanAndUpload.py
-- tagScanAndUpload.py - The main file. 
-	- Call this script. Must be run as root, Python 3 or above. In Raspbian, this is called as `sudo python3 tagScanAndUpload.py`. 
-	- This file has various editable parameters declared at the top. See this file for description of how we scan, how often we scan, etc.. 
+## Contents
+- wpa_supplicant.conf - WiFi credentials. Currently setup to VCU SafeNet.
+- AddTrustExternalCARoot.crt - Required for VCU SafeNet wireless. See wpa_supplicant.conf for instructions.
+- crontab - Contains jobs to be placed in root's crontab. Runs our script on reboot. Also reboots Pi periodically in case our script had issues and exited; edit how often by editing this file.
+- ibeacon_scan.sh - A helper script which performs the actual scanning. Called by tagScanAndUpload.py
+- tagScanAndUpload.py - The main script. 
+	- You may manually perform scanning by running this script. It must be run as root with Python 3. In Raspbian, this is called as `sudo python3 tagScanAndUpload.py`. 
+	- This file has various editable parameters declared at the top. See this file for description of how we scan, how often we scan, etc..
 	- This script produces a log file. Use this for troubleshooting.
 	
-Protip: If you manually kill either ibeacon_scan.sh or tagScanAndUpload.py , you may have left a child process hcidump running.
-Run `pidof hcidump`. If any PIDs are output, run `sudo pkill hcidump`, then `sudo hciconfig hci0 down`, then `sudo hciconfig hci0 up`.
+Note that several files or lines in files are missing because we don't want to publish passwords on GitHub.
+This includes: 
+- serviceAccountKey.json - A copy can be created/downloaded from the Firebase website.
+- wpa_supplicant.conf - The WiFi credentials are deleted. Technically any VCU user will do, though VCU IT required that we use a specially created group account.
