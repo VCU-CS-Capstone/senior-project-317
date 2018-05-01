@@ -8,6 +8,10 @@ Dr. Bulut should still have access to our Firebase instance in the future. If no
 
 Note that our project worked with the Firebase Realtime Database. By the time we finished, Firebase was rolling out Cloud Firestore. So, eventually, these instructions may be outdated.
 
+## Database
+See [Database Structure](./databaseStructure.pdf) for a ER diagram and example of the JSON structure used (Firebase is JSON based).
+
+
 ## Tips for Firebase
 For any serious use of the database, the online GUI will not sufficient. See https://firebase.google.com/docs/cli/ for information on how to setup a CLI interface.
 
